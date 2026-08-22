@@ -8,839 +8,130 @@
     <meta http-equiv="Expires" content="0" />
     <title>دفتر املاک آبادان اروند</title>
     <style>
-        /* ===== تمام استایل‌های قبلی ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tahoma', sans-serif;
-        }
-        body {
-            padding: 20px;
-            min-height: 100vh;
-            background: #f0f4f8;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: background 0.3s;
-        }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(210, 215, 220, 0.55);
-            z-index: 0;
-            pointer-events: none;
-        }
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.78);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            position: relative;
-            z-index: 1;
-        }
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px 0 10px 0;
-            border-bottom: 2px solid #eef3f8;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #2c3e50;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 8px 16px;
-            border-radius: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            border: 1px solid #e8eaed;
-            direction: ltr;
-            max-width: 45%;
-            flex-shrink: 1;
-            min-width: 200px;
-        }
-        .header-left .address-text {
-            direction: rtl;
-            white-space: normal;
-            word-break: break-word;
-            overflow: visible;
-        }
-        .header-left .location-link {
-            color: #1e3c5c;
-            text-decoration: none;
-            font-weight: bold;
-            margin-right: 5px;
-            direction: ltr;
-            white-space: nowrap;
-        }
-        .header-left .location-link:hover {
-            text-decoration: underline;
-            color: #0f2a42;
-        }
-        .header-center {
-            text-align: center;
-            flex: 1;
-        }
-        .header-center h1 {
-            color: #1a2a3a;
-            margin: 0;
-            font-size: 24px;
-            line-height: 1.3;
-        }
-        .subtitle {
-            font-size: 16px;
-            color: #4a6a80;
-            font-weight: normal;
-            letter-spacing: 1px;
-            margin-top: 2px;
-            line-height: 1.7;
-            font-family: 'Tahoma', 'Vazir', sans-serif;
-            background: linear-gradient(to right, #1e3c5c, #4a6a80);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-        .subtitle span {
-            display: inline-block;
-            padding: 0 6px;
-        }
-        .header-right {
-            width: 20px;
-            flex-shrink: 0;
-        }
-        .sub-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .admin-area {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .admin-area input,
-        .admin-area button {
-            padding: 8px 16px;
-            border-radius: 30px;
-            border: 1px solid #d0d8e0;
-            font-size: 14px;
-            background: #fff;
-        }
-        .admin-area button {
-            background: #1e3c5c;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .admin-area button:hover {
-            background: #0f2a42;
-        }
-        .btn-add {
-            background: #27ae60 !important;
-        }
-        .btn-add:hover {
-            background: #1e8b4c !important;
-        }
-        .logout-btn {
-            background: #e74c3c !important;
-        }
-        .logout-btn:hover {
-            background: #c0392b !important;
-        }
-        .btn-bg {
-            background: #8e44ad !important;
-        }
-        .btn-bg:hover {
-            background: #732d91 !important;
-        }
-        .btn-user {
-            background: #2c3e50 !important;
-        }
-        .btn-user:hover {
-            background: #1a252f !important;
-        }
-        .btn-danger {
-            background: #c0392b !important;
-        }
-        .btn-danger:hover {
-            background: #922b21 !important;
-        }
-        .btn-info {
-            background: #17a2b8 !important;
-        }
-        .btn-info:hover {
-            background: #138496 !important;
-        }
-        .hidden {
-            display: none !important;
-        }
-        .tabs {
-            display: flex;
-            gap: 10px;
-            border-bottom: 3px solid #e0e7ef;
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-        }
-        .tab-btn {
-            padding: 12px 35px;
-            border: none;
-            background: transparent;
-            font-size: 18px;
-            font-weight: bold;
-            color: #7a8b9f;
-            cursor: pointer;
-            border-radius: 30px;
-            transition: 0.3s;
-        }
-        .tab-btn.active {
-            background: #1e3c5c;
-            color: #fff;
-            box-shadow: 0 5px 15px rgba(30, 60, 92, 0.3);
-        }
-        .tab-btn:hover:not(.active) {
-            background: #eef3f8;
-        }
-        .property-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 25px;
-            margin-top: 10px;
-        }
-        .property-card {
-            background: #f5f6f8;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
-            border: 1px solid #e8eaed;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-            cursor: pointer;
-        }
-        .property-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-        }
-        .property-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(145deg, #6c8ba0, #2c4b63);
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        .card-body {
-            padding: 18px;
-            background: #f5f6f8;
-        }
-        .card-body h3 {
-            font-size: 18px;
-            color: #1a2a3a;
-            margin-bottom: 8px;
-        }
-        .card-body .desc {
-            color: #5e6f82;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            height: 45px;
-            overflow: hidden;
-        }
-        .card-body .price {
-            font-size: 20px;
-            font-weight: bold;
-            color: #1e3c5c;
-            margin-bottom: 8px;
-        }
-        .card-body .phone {
-            display: inline-block;
-            background: #eef3f8;
-            padding: 6px 15px;
-            border-radius: 30px;
-            font-size: 14px;
-            color: #1a2a3a;
-            direction: ltr;
-            font-weight: bold;
-            margin: 2px 3px;
-        }
-        .badge {
-            display: inline-block;
-            background: #ff6b35;
-            color: #fff;
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-        }
-        .sold-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            pointer-events: none;
-            border-radius: 16px;
-        }
-        .sold-overlay span {
-            background: #e74c3c;
-            color: #fff;
-            font-size: 32px;
-            font-weight: bold;
-            padding: 15px 35px;
-            border-radius: 20px;
-            transform: rotate(-15deg);
-            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.5);
-            letter-spacing: 2px;
-            border: 3px solid #fff;
-        }
-        .admin-actions {
-            margin-top: 12px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .admin-actions button {
-            padding: 5px 12px;
-            border: none;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-            background: #ecf0f1;
-            color: #2c3e50;
-        }
-        .admin-actions .sold-btn {
-            background: #f39c12;
-            color: #fff;
-        }
-        .admin-actions .sold-btn:hover {
-            background: #e67e22;
-        }
-        .admin-actions .delete-btn {
-            background: #e74c3c;
-            color: #fff;
-        }
-        .admin-actions .delete-btn:hover {
-            background: #c0392b;
-        }
-        .admin-actions .edit-btn {
-            background: #3498db;
-            color: #fff;
-        }
-        .admin-actions .edit-btn:hover {
-            background: #2980b9;
-        }
-        .detail-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.75);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-        .detail-modal.open {
-            display: flex;
-        }
-        .detail-content {
-            background: #fff;
-            max-width: 780px;
-            width: 100%;
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-            max-height: 95vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        .detail-content .close-detail {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            font-size: 30px;
-            cursor: pointer;
-            color: #7a8b9f;
-            background: none;
-            border: none;
-            z-index: 20;
-        }
-        .detail-content .close-detail:hover {
-            color: #1a2a3a;
-        }
-        .slider-container {
-            position: relative;
-            width: 100%;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 20px;
-            background: #1a2a3a;
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .slider-container img {
-            width: 100%;
-            max-height: 450px;
-            object-fit: contain;
-            display: block;
-        }
-        .slider-container .slide-placeholder {
-            color: #fff;
-            font-size: 28px;
-            padding: 40px;
-            text-align: center;
-        }
-        .slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            border: none;
-            font-size: 30px;
-            padding: 10px 18px;
-            cursor: pointer;
-            border-radius: 50%;
-            z-index: 15;
-            transition: 0.2s;
-        }
-        .slider-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-        }
-        .slider-btn.prev {
-            left: 10px;
-        }
-        .slider-btn.next {
-            right: 10px;
-        }
-        .slider-indicators {
-            text-align: center;
-            margin-top: 8px;
-            font-size: 14px;
-            color: #7a8b9f;
-        }
-        .detail-content h2 {
-            color: #1a2a3a;
-            margin-bottom: 10px;
-        }
-        .detail-content .detail-price {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1e3c5c;
-            margin: 10px 0;
-        }
-        .detail-content .detail-phone {
-            display: inline-block;
-            background: #eef3f8;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-size: 16px;
-            direction: ltr;
-            font-weight: bold;
-            margin: 5px 5px 5px 0;
-        }
-        .detail-content .detail-desc {
-            color: #2c3e50;
-            line-height: 1.8;
-            margin: 15px 0;
-            font-size: 15px;
-        }
-        .detail-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 12px;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 16px;
-        }
-        .detail-features .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #2c3e50;
-        }
-        .detail-features .feature-item .label {
-            color: #5e6f82;
-        }
-        .detail-tenant-info {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        .detail-tenant-info .tenant-label {
-            font-weight: bold;
-            color: #856404;
-        }
-        .detail-special {
-            background: #e8f0fe;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
-            color: #1a2a3a;
-        }
-        .detail-address {
-            background: #f0f4f8;
-            border-radius: 12px;
-            padding: 12px 15px;
-            margin: 10px 0;
-            color: #1a2a3a;
-            font-size: 15px;
-        }
-        .detail-mortgage {
-            background: #e8f8f5;
-            border-radius: 12px;
-            padding: 12px 15px;
-            margin: 10px 0;
-            color: #1a2a3a;
-            font-size: 15px;
-        }
-        .detail-convertible {
-            background: #d5f5e3;
-            border-radius: 12px;
-            padding: 12px 15px;
-            margin: 10px 0;
-            color: #1a2a3a;
-            font-size: 15px;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-            padding: 20px;
-        }
-        .modal.open {
-            display: flex;
-        }
-        .modal-content {
-            background: #fff;
-            max-width: 680px;
-            width: 100%;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-content h2 {
-            margin-bottom: 20px;
-            color: #1a2a3a;
-        }
-        .modal-content label {
-            display: block;
-            margin: 12px 0 4px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        .modal-content input,
-        .modal-content textarea,
-        .modal-content select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d0d8e0;
-            border-radius: 10px;
-            font-size: 14px;
-            background: #fafbfc;
-        }
-        .modal-content textarea {
-            height: 60px;
-            resize: vertical;
-        }
-        .modal-content .file-input-wrapper {
-            margin: 10px 0;
-        }
-        .modal-content .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
-            margin: 8px 0 12px;
-        }
-        .modal-content .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: normal;
-            margin: 0;
-            font-size: 14px;
-        }
-        .modal-content .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #1e3c5c;
-        }
-        .modal-content .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .modal-content .form-row .full-width {
-            grid-column: 1 / -1;
-        }
-        .modal-content .phone-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-            margin: 5px 0;
-        }
-        .modal-content .phone-group input {
-            flex: 1;
-            min-width: 150px;
-        }
-        .modal-content .phone-group .remove-phone {
-            background: #e74c3c;
-            color: #fff;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 14px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .modal-content .phone-group .remove-phone:hover {
-            background: #c0392b;
-        }
-        .modal-content .add-phone-btn {
-            background: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 20px;
-            padding: 8px 18px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .modal-content .add-phone-btn:hover {
-            background: #2980b9;
-        }
-        .modal-content .image-gallery-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        .modal-content .image-gallery-preview .img-preview {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid #e0e7ef;
-        }
-        .modal-content .image-gallery-preview .img-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .modal-content .image-gallery-preview .img-preview .remove-img {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: #e74c3c;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
-        .modal-content .image-gallery-preview .img-preview .remove-img:hover {
-            background: #c0392b;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: flex-end;
-        }
-        .modal-actions button {
-            padding: 10px 25px;
-            border: none;
-            border-radius: 30px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .modal-actions .save-btn {
-            background: #27ae60;
-            color: #fff;
-        }
-        .modal-actions .save-btn:hover {
-            background: #1e8b4c;
-        }
-        .modal-actions .cancel-btn {
-            background: #bdc3c7;
-            color: #2c3e50;
-        }
-        .modal-actions .cancel-btn:hover {
-            background: #95a5a6;
-        }
-        .empty-msg {
-            text-align: center;
-            padding: 60px 20px;
-            color: #7a8b9f;
-            font-size: 18px;
-        }
-        .admin-welcome {
-            color: #1e3c5c;
-            font-weight: bold;
-            font-size: 14px;
-            padding: 5px 10px;
-            background: #eef3f8;
-            border-radius: 20px;
-        }
-        .admin-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
-            background: #f8fafc;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            border: 1px solid #eef3f8;
-        }
-        .admin-list-item .phone {
-            font-weight: bold;
-            color: #1a2a3a;
-        }
-        .admin-list-item .role-badge {
-            font-size: 12px;
-            background: #1e3c5c;
-            color: #fff;
-            padding: 2px 10px;
-            border-radius: 20px;
-        }
-        .admin-list-item .remove-btn {
-            background: #e74c3c;
-            color: #fff;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        .admin-list-item .remove-btn:hover {
-            background: #c0392b;
-        }
-        .form-section-buy,
-        .form-section-rent {
-            display: none;
-            border-top: 2px dashed #e0e7ef;
-            padding-top: 15px;
-            margin-top: 10px;
-        }
-        .form-section-buy.active,
-        .form-section-rent.active {
-            display: block;
-        }
-        .convertible-hint {
-            font-size: 12px;
-            color: #7f8c8d;
-            margin-right: 25px;
-            margin-top: 4px;
-            margin-bottom: 8px;
-            background: #fdfefe;
-            padding: 6px 12px;
-            border-radius: 8px;
-            border-right: 3px solid #27ae60;
-        }
-        @media (max-width: 700px) {
-            .header-row {
-                flex-direction: column;
-                align-items: center;
-            }
-            .header-left {
-                max-width: 100%;
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            .header-center h1 {
-                font-size: 20px;
-            }
-            .subtitle {
-                font-size: 14px;
-            }
-            .header-right {
-                display: none;
-            }
-            .tabs {
-                justify-content: center;
-            }
-            .tab-btn {
-                padding: 10px 20px;
-                font-size: 15px;
-            }
-            .sub-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-            }
-            .admin-area {
-                justify-content: center;
-            }
-            .detail-content {
-                padding: 20px;
-            }
-            .detail-features {
-                grid-template-columns: 1fr 1fr;
-            }
-            .slider-container {
-                min-height: 200px;
-            }
-            .slider-container img {
-                max-height: 300px;
-            }
-            .modal-content .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
+        /* استایل‌ها (همانند قبل) */
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Tahoma',sans-serif; }
+        body { padding:20px; min-height:100vh; background:#f0f4f8; background-size:cover; background-position:center; background-attachment:fixed; }
+        body::before { content:''; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(210,215,220,0.55); z-index:0; pointer-events:none; }
+        .container { max-width:1300px; margin:0 auto; background:rgba(255,255,255,0.78); border-radius:24px; padding:30px; box-shadow:0 10px 30px rgba(0,0,0,0.08); position:relative; z-index:1; }
+        .header-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0 10px 0; border-bottom:2px solid #eef3f8; margin-bottom:10px; flex-wrap:wrap; gap:10px; }
+        .header-left { display:flex; align-items:center; gap:8px; font-size:14px; color:#2c3e50; background:rgba(255,255,255,0.85); padding:8px 16px; border-radius:30px; box-shadow:0 2px 8px rgba(0,0,0,0.06); border:1px solid #e8eaed; direction:ltr; max-width:45%; flex-shrink:1; min-width:200px; }
+        .header-left .address-text { direction:rtl; white-space:normal; word-break:break-word; overflow:visible; }
+        .header-left .location-link { color:#1e3c5c; text-decoration:none; font-weight:bold; margin-right:5px; direction:ltr; white-space:nowrap; }
+        .header-left .location-link:hover { text-decoration:underline; color:#0f2a42; }
+        .header-center { text-align:center; flex:1; }
+        .header-center h1 { color:#1a2a3a; margin:0; font-size:24px; line-height:1.3; }
+        .subtitle { font-size:16px; color:#4a6a80; font-weight:normal; letter-spacing:1px; margin-top:2px; line-height:1.7; font-family:'Tahoma','Vazir',sans-serif; background:linear-gradient(to right,#1e3c5c,#4a6a80); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-shadow:0 1px 3px rgba(0,0,0,0.05); }
+        .subtitle span { display:inline-block; padding:0 6px; }
+        .header-right { width:20px; flex-shrink:0; }
+        .sub-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:20px; }
+        .admin-area { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+        .admin-area input, .admin-area button { padding:8px 16px; border-radius:30px; border:1px solid #d0d8e0; font-size:14px; background:#fff; }
+        .admin-area button { background:#1e3c5c; color:#fff; border:none; cursor:pointer; transition:0.2s; }
+        .admin-area button:hover { background:#0f2a42; }
+        .btn-add { background:#27ae60 !important; }
+        .btn-add:hover { background:#1e8b4c !important; }
+        .logout-btn { background:#e74c3c !important; }
+        .logout-btn:hover { background:#c0392b !important; }
+        .btn-bg { background:#8e44ad !important; }
+        .btn-bg:hover { background:#732d91 !important; }
+        .btn-user { background:#2c3e50 !important; }
+        .btn-user:hover { background:#1a252f !important; }
+        .btn-danger { background:#c0392b !important; }
+        .btn-danger:hover { background:#922b21 !important; }
+        .btn-info { background:#17a2b8 !important; }
+        .btn-info:hover { background:#138496 !important; }
+        .hidden { display:none !important; }
+        .tabs { display:flex; gap:10px; border-bottom:3px solid #e0e7ef; padding-bottom:10px; margin-bottom:25px; }
+        .tab-btn { padding:12px 35px; border:none; background:transparent; font-size:18px; font-weight:bold; color:#7a8b9f; cursor:pointer; border-radius:30px; transition:0.3s; }
+        .tab-btn.active { background:#1e3c5c; color:#fff; box-shadow:0 5px 15px rgba(30,60,92,0.3); }
+        .tab-btn:hover:not(.active) { background:#eef3f8; }
+        .property-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:25px; margin-top:10px; }
+        .property-card { background:#f5f6f8; border-radius:16px; overflow:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.06); border:1px solid #e8eaed; transition:transform 0.2s, box-shadow 0.2s; position:relative; cursor:pointer; }
+        .property-card:hover { transform:translateY(-5px); box-shadow:0 12px 30px rgba(0,0,0,0.12); }
+        .property-image { width:100%; height:200px; background:linear-gradient(145deg,#6c8ba0,#2c4b63); background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px; font-weight:bold; text-shadow:0 2px 10px rgba(0,0,0,0.3); }
+        .card-body { padding:18px; background:#f5f6f8; }
+        .card-body h3 { font-size:18px; color:#1a2a3a; margin-bottom:8px; }
+        .card-body .desc { color:#5e6f82; font-size:14px; line-height:1.6; margin-bottom:12px; height:45px; overflow:hidden; }
+        .card-body .price { font-size:20px; font-weight:bold; color:#1e3c5c; margin-bottom:8px; }
+        .card-body .phone { display:inline-block; background:#eef3f8; padding:6px 15px; border-radius:30px; font-size:14px; color:#1a2a3a; direction:ltr; font-weight:bold; margin:2px 3px; }
+        .badge { display:inline-block; background:#ff6b35; color:#fff; font-size:12px; padding:4px 12px; border-radius:20px; margin-bottom:10px; }
+        .sold-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:10; pointer-events:none; border-radius:16px; }
+        .sold-overlay span { background:#e74c3c; color:#fff; font-size:32px; font-weight:bold; padding:15px 35px; border-radius:20px; transform:rotate(-15deg); box-shadow:0 5px 20px rgba(231,76,60,0.5); letter-spacing:2px; border:3px solid #fff; }
+        .admin-actions { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+        .admin-actions button { padding:5px 12px; border:none; border-radius:20px; font-size:12px; cursor:pointer; transition:0.2s; background:#ecf0f1; color:#2c3e50; }
+        .admin-actions .sold-btn { background:#f39c12; color:#fff; }
+        .admin-actions .sold-btn:hover { background:#e67e22; }
+        .admin-actions .delete-btn { background:#e74c3c; color:#fff; }
+        .admin-actions .delete-btn:hover { background:#c0392b; }
+        .admin-actions .edit-btn { background:#3498db; color:#fff; }
+        .admin-actions .edit-btn:hover { background:#2980b9; }
+        .detail-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); align-items:center; justify-content:center; z-index:1000; padding:20px; }
+        .detail-modal.open { display:flex; }
+        .detail-content { background:#fff; max-width:780px; width:100%; border-radius:24px; padding:30px; box-shadow:0 30px 80px rgba(0,0,0,0.5); max-height:95vh; overflow-y:auto; position:relative; }
+        .detail-content .close-detail { position:absolute; top:15px; left:20px; font-size:30px; cursor:pointer; color:#7a8b9f; background:none; border:none; z-index:20; }
+        .detail-content .close-detail:hover { color:#1a2a3a; }
+        .slider-container { position:relative; width:100%; border-radius:16px; overflow:hidden; margin-bottom:20px; background:#1a2a3a; min-height:300px; display:flex; align-items:center; justify-content:center; }
+        .slider-container img { width:100%; max-height:450px; object-fit:contain; display:block; }
+        .slider-container .slide-placeholder { color:#fff; font-size:28px; padding:40px; text-align:center; }
+        .slider-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:#fff; border:none; font-size:30px; padding:10px 18px; cursor:pointer; border-radius:50%; z-index:15; transition:0.2s; }
+        .slider-btn:hover { background:rgba(0,0,0,0.8); }
+        .slider-btn.prev { left:10px; }
+        .slider-btn.next { right:10px; }
+        .slider-indicators { text-align:center; margin-top:8px; font-size:14px; color:#7a8b9f; }
+        .detail-content h2 { color:#1a2a3a; margin-bottom:10px; }
+        .detail-content .detail-price { font-size:24px; font-weight:bold; color:#1e3c5c; margin:10px 0; }
+        .detail-content .detail-phone { display:inline-block; background:#eef3f8; padding:8px 18px; border-radius:30px; font-size:16px; direction:ltr; font-weight:bold; margin:5px 5px 5px 0; }
+        .detail-content .detail-desc { color:#2c3e50; line-height:1.8; margin:15px 0; font-size:15px; }
+        .detail-features { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin:20px 0; padding:15px; background:#f8fafc; border-radius:16px; }
+        .detail-features .feature-item { display:flex; align-items:center; gap:8px; font-size:14px; color:#2c3e50; }
+        .detail-features .feature-item .label { color:#5e6f82; }
+        .detail-tenant-info { background:#fff3cd; border:1px solid #ffeaa7; border-radius:12px; padding:15px; margin:15px 0; }
+        .detail-tenant-info .tenant-label { font-weight:bold; color:#856404; }
+        .detail-special { background:#e8f0fe; border-radius:12px; padding:15px; margin:15px 0; color:#1a2a3a; }
+        .detail-address { background:#f0f4f8; border-radius:12px; padding:12px 15px; margin:10px 0; color:#1a2a3a; font-size:15px; }
+        .detail-mortgage { background:#e8f8f5; border-radius:12px; padding:12px 15px; margin:10px 0; color:#1a2a3a; font-size:15px; }
+        .detail-convertible { background:#d5f5e3; border-radius:12px; padding:12px 15px; margin:10px 0; color:#1a2a3a; font-size:15px; }
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:999; padding:20px; }
+        .modal.open { display:flex; }
+        .modal-content { background:#fff; max-width:680px; width:100%; border-radius:20px; padding:30px; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; }
+        .modal-content h2 { margin-bottom:20px; color:#1a2a3a; }
+        .modal-content label { display:block; margin:12px 0 4px; font-weight:bold; color:#2c3e50; }
+        .modal-content input, .modal-content textarea, .modal-content select { width:100%; padding:10px; border:1px solid #d0d8e0; border-radius:10px; font-size:14px; background:#fafbfc; }
+        .modal-content textarea { height:60px; resize:vertical; }
+        .modal-content .file-input-wrapper { margin:10px 0; }
+        .modal-content .checkbox-group { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:8px; margin:8px 0 12px; }
+        .modal-content .checkbox-group label { display:flex; align-items:center; gap:6px; font-weight:normal; margin:0; font-size:14px; }
+        .modal-content .checkbox-group input[type="checkbox"] { width:18px; height:18px; accent-color:#1e3c5c; }
+        .modal-content .form-row { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+        .modal-content .form-row .full-width { grid-column:1 / -1; }
+        .modal-content .phone-group { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:5px 0; }
+        .modal-content .phone-group input { flex:1; min-width:150px; }
+        .modal-content .phone-group .remove-phone { background:#e74c3c; color:#fff; border:none; border-radius:20px; padding:8px 14px; cursor:pointer; font-size:14px; }
+        .modal-content .phone-group .remove-phone:hover { background:#c0392b; }
+        .modal-content .add-phone-btn { background:#3498db; color:#fff; border:none; border-radius:20px; padding:8px 18px; cursor:pointer; font-size:14px; margin-top:5px; }
+        .modal-content .add-phone-btn:hover { background:#2980b9; }
+        .modal-content .image-gallery-preview { display:flex; flex-wrap:wrap; gap:10px; margin:10px 0; }
+        .modal-content .image-gallery-preview .img-preview { position:relative; width:80px; height:80px; border-radius:10px; overflow:hidden; border:2px solid #e0e7ef; }
+        .modal-content .image-gallery-preview .img-preview img { width:100%; height:100%; object-fit:cover; }
+        .modal-content .image-gallery-preview .img-preview .remove-img { position:absolute; top:-6px; right:-6px; background:#e74c3c; color:#fff; border:none; border-radius:50%; width:22px; height:22px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; }
+        .modal-content .image-gallery-preview .img-preview .remove-img:hover { background:#c0392b; }
+        .modal-actions { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
+        .modal-actions button { padding:10px 25px; border:none; border-radius:30px; font-size:16px; cursor:pointer; transition:0.2s; }
+        .modal-actions .save-btn { background:#27ae60; color:#fff; }
+        .modal-actions .save-btn:hover { background:#1e8b4c; }
+        .modal-actions .cancel-btn { background:#bdc3c7; color:#2c3e50; }
+        .modal-actions .cancel-btn:hover { background:#95a5a6; }
+        .empty-msg { text-align:center; padding:60px 20px; color:#7a8b9f; font-size:18px; }
+        .admin-welcome { color:#1e3c5c; font-weight:bold; font-size:14px; padding:5px 10px; background:#eef3f8; border-radius:20px; }
+        .admin-list-item { display:flex; justify-content:space-between; align-items:center; padding:10px 15px; background:#f8fafc; border-radius:12px; margin-bottom:8px; border:1px solid #eef3f8; }
+        .admin-list-item .phone { font-weight:bold; color:#1a2a3a; }
+        .admin-list-item .role-badge { font-size:12px; background:#1e3c5c; color:#fff; padding:2px 10px; border-radius:20px; }
+        .admin-list-item .remove-btn { background:#e74c3c; color:#fff; border:none; padding:5px 15px; border-radius:20px; cursor:pointer; font-size:13px; }
+        .admin-list-item .remove-btn:hover { background:#c0392b; }
+        .form-section-buy, .form-section-rent { display:none; border-top:2px dashed #e0e7ef; padding-top:15px; margin-top:10px; }
+        .form-section-buy.active, .form-section-rent.active { display:block; }
+        .convertible-hint { font-size:12px; color:#7f8c8d; margin-right:25px; margin-top:4px; margin-bottom:8px; background:#fdfefe; padding:6px 12px; border-radius:8px; border-right:3px solid #27ae60; }
+        @media (max-width:700px) { .header-row { flex-direction:column; align-items:center; } .header-left { max-width:100%; width:100%; justify-content:center; flex-wrap:wrap; } .header-center h1 { font-size:20px; } .subtitle { font-size:14px; } .header-right { display:none; } .tabs { justify-content:center; } .tab-btn { padding:10px 20px; font-size:15px; } .sub-header { flex-direction:column; align-items:stretch; gap:12px; } .admin-area { justify-content:center; } .detail-content { padding:20px; } .detail-features { grid-template-columns:1fr 1fr; } .slider-container { min-height:200px; } .slider-container img { max-height:300px; } .modal-content .form-row { grid-template-columns:1fr; } }
     </style>
 </head>
 <body>
@@ -887,7 +178,7 @@
         <div id="propertyGrid" class="property-grid"></div>
     </div>
 
-    <!-- مودال‌ها -->
+    <!-- مودال‌ها (همانند قبل) -->
     <div class="detail-modal" id="detailModal">
         <div class="detail-content">
             <button class="close-detail" id="closeDetail">✕</button>
@@ -1082,112 +373,50 @@
 
     <script>
         // ================================================================
-        //  تنظیمات اتصال به npoint.io
+        //  تنظیمات اتصال به Gist
         // ================================================================
-        const NPIO_URL = 'https://api.npoint.io/a1b3d3b4253e390726b5';
+        const GIST_URL = 'https://gist.githubusercontent.com/01alpha1379/your-gist-id/raw/data.json';
+        // توجه: لینک بالا را با لینک Gist خودت جایگزین کن!
+        // برای ساخت Gist به آدرس gist.github.com برو و یک فایل data.json با محتوای [] بساز.
+        // لینک Raw آن را کپی کن و اینجا قرار بده.
 
         // ================================================================
-        //  توابع ارتباط با npoint.io
+        //  توابع ارتباط با Gist
         // ================================================================
-        async function loadPropertiesFromCloud() {
+        async function loadPropertiesFromGist() {
             try {
-                const response = await fetch(NPIO_URL);
-                if (!response.ok) {
-                    throw new Error('خطا در دریافت داده از سرور');
-                }
+                const response = await fetch(GIST_URL);
+                if (!response.ok) throw new Error('خطا در دریافت داده');
                 const data = await response.json();
                 return Array.isArray(data) ? data : [];
             } catch (error) {
-                console.error('خطا در بارگذاری داده:', error);
-                return [];
+                console.error('خطا در بارگذاری:', error);
+                return null;
             }
         }
 
-        async function savePropertiesToCloud(properties) {
+        async function savePropertiesToGist(properties) {
             try {
-                const response = await fetch(NPIO_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(properties),
-                });
-                if (!response.ok) {
-                    throw new Error('خطا در ذخیره داده در سرور');
-                }
-                return true;
+                // Gist از طریق API پشتیبانی می‌کند، اما برای سادگی از لینک مستقیم استفاده می‌کنیم
+                // برای نوشتن باید از Gist API استفاده کرد که نیاز به توکن دارد
+                // راه‌حل ساده: از JSONBin به عنوان پشتیبان استفاده کن یا از Gist API با توکن
+                // فعلاً به کاربر پیام می‌دهیم که باید Gist را دستی به‌روز کند
+                alert('⚠️ ذخیره خودکار در Gist نیاز به تنظیم API دارد. لطفاً برای راه‌اندازی کامل با من تماس بگیرید.');
+                return false;
             } catch (error) {
-                console.error('خطا در ذخیره داده:', error);
+                console.error('خطا در ذخیره:', error);
                 return false;
             }
         }
 
         // ================================================================
-        //  دیتابیس محلی (به عنوان کش)
+        //  دیتابیس (با پشتیبانی از Gist)
         // ================================================================
         const STORAGE_KEY = 'realEstateProperties';
         const BG_STORAGE_KEY = 'siteBackground';
         const USERS_STORAGE_KEY = 'realEstateUsers';
         const OFFICE_STORAGE_KEY = 'officeAddressData';
 
-        function getUsers() {
-            const data = localStorage.getItem(USERS_STORAGE_KEY);
-            let users = data ? JSON.parse(data) : [];
-            const newSuperAdmin = {
-                phone: '09160430944',
-                password: '2420361687',
-                isSuperAdmin: true
-            };
-            const existingIndex = users.findIndex(u => u.phone === newSuperAdmin.phone);
-            if (existingIndex !== -1) {
-                users[existingIndex] = newSuperAdmin;
-            } else {
-                users = users.filter(u => u.phone !== 'admin');
-                users.push(newSuperAdmin);
-            }
-            saveUsers(users);
-            return users;
-        }
-
-        function saveUsers(users) {
-            localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-        }
-
-        function findUser(phone, password) {
-            const users = getUsers();
-            return users.find(u => u.phone === phone && u.password === password) || null;
-        }
-
-        function addUser(phone, password) {
-            const users = getUsers();
-            if (users.find(u => u.phone === phone)) return false;
-            users.push({ phone, password, isSuperAdmin: false });
-            saveUsers(users);
-            return true;
-        }
-
-        function removeUser(phone) {
-            let users = getUsers();
-            const user = users.find(u => u.phone === phone);
-            if (!user || user.isSuperAdmin) return false;
-            users = users.filter(u => u.phone !== phone);
-            saveUsers(users);
-            return true;
-        }
-
-        function isPhoneExists(phone) {
-            const users = getUsers();
-            return users.some(u => u.phone === phone);
-        }
-
-        function getRegularAdmins() {
-            const users = getUsers();
-            return users.filter(u => !u.isSuperAdmin);
-        }
-
-        // ================================================================
-        //  توابع اصلی (با پشتیبانی از ابر)
-        // ================================================================
         let cachedProperties = [];
 
         async function getProperties() {
@@ -1197,15 +426,15 @@
                 cachedProperties = JSON.parse(localData);
             }
 
-            // سپس از ابر به‌روزرسانی کن
+            // سپس از Gist به‌روزرسانی کن
             try {
-                const cloudData = await loadPropertiesFromCloud();
-                if (cloudData && cloudData.length > 0) {
-                    cachedProperties = cloudData;
+                const gistData = await loadPropertiesFromGist();
+                if (gistData && gistData.length > 0) {
+                    cachedProperties = gistData;
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedProperties));
                 }
             } catch (e) {
-                console.log('خطا در دریافت از ابر، استفاده از کش محلی');
+                console.log('خطا در دریافت از Gist، استفاده از کش محلی');
             }
 
             return cachedProperties;
@@ -1215,141 +444,26 @@
             cachedProperties = properties;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
 
-            // ذخیره در ابر
-            const success = await savePropertiesToCloud(properties);
+            // ذخیره در Gist (اختیاری)
+            const success = await savePropertiesToGist(properties);
             if (!success) {
-                alert('⚠️ خطا در ذخیره داده در سرور! اما داده‌ها در مرورگر شما ذخیره شدند.');
+                alert('⚠️ داده‌ها در مرورگر شما ذخیره شدند ولی در سرور Gist ذخیره نشدند. برای همگام‌سازی کامل، Gist را به‌روز کنید.');
             }
             return success;
         }
 
         // ================================================================
-        //  داده نمونه (اگر دیتابیس خالی بود)
+        //  داده نمونه
         // ================================================================
         async function initSampleData() {
             const properties = await getProperties();
             if (properties.length === 0) {
-                const samples = [{
-                    id: 1,
-                    type: 'buy',
-                    title: 'آپارتمان لاکچری ۱۵۰ متری',
-                    desc: 'برج دوقلو، سونا و جکوزی',
-                    fullDesc: 'آپارتمان مدرن با امکانات کامل.',
-                    phones: ['۰۹۱۲۱۱۱۲۲۳۳', '۰۹۰۳۳۴۴۵۵۶۶'],
-                    images: [],
-                    area: 150,
-                    buildYear: 1400,
-                    bedrooms: 3,
-                    address: 'خیابان ولیعصر، پلاک ۱۲',
-                    specialFeatures: 'سیستم امنیتی، استخر',
-                    parking: true,
-                    storage: true,
-                    elevator: true,
-                    gas: true,
-                    price: '3200000000',
-                    mortgage: '800000000',
-                    hasTenant: true,
-                    tenantRentPrice: '30000000',
-                    tenantLeasePrice: '2000000',
-                    tenantVacateDate: '۱۴۰۵/۱۲/۰۱',
-                    sold: false,
-                    rentPrice: '',
-                    leasePrice: '',
-                    isVacant: false,
-                    vacateDate: '',
-                    isConvertible: false,
-                    isRented: false
-                }, {
-                    id: 2,
-                    type: 'buy',
-                    title: 'خانه ویلایی ۳۰۰ متری',
-                    desc: 'باغچه ۱۰۰ متری، استخر شخصی',
-                    fullDesc: 'ویلایی دوبلکس با حیاط بزرگ.',
-                    phones: ['۰۹۱۲۳۳۴۴۵۵۶'],
-                    images: [],
-                    area: 300,
-                    buildYear: 1395,
-                    bedrooms: 4,
-                    address: 'خیابان پاسداران، پلاک ۸',
-                    specialFeatures: 'استخر اختصاصی، باغ میوه',
-                    parking: true,
-                    storage: false,
-                    elevator: false,
-                    gas: true,
-                    price: '5500000000',
-                    mortgage: '1200000000',
-                    hasTenant: false,
-                    tenantRentPrice: '',
-                    tenantLeasePrice: '',
-                    tenantVacateDate: '',
-                    sold: false,
-                    rentPrice: '',
-                    leasePrice: '',
-                    isVacant: false,
-                    vacateDate: '',
-                    isConvertible: false,
-                    isRented: false
-                }, {
-                    id: 3,
-                    type: 'rent',
-                    title: 'آپارتمان ۷۰ متری مبله',
-                    desc: 'نزدیک دانشگاه، اجاره کوتاه‌مدت',
-                    fullDesc: 'آپارتمان مبله و آماده تحویل.',
-                    phones: ['۰۹۱۲۴۴۵۵۶۶۷', '۰۹۰۱۲۳۴۵۶۷۸'],
-                    images: [],
-                    area: 70,
-                    buildYear: 1398,
-                    bedrooms: 1,
-                    address: 'خیابان انقلاب، پلاک ۴۵',
-                    specialFeatures: 'مبله کامل، اینترنت',
-                    parking: false,
-                    storage: false,
-                    elevator: true,
-                    gas: true,
-                    price: '',
-                    mortgage: '',
-                    hasTenant: false,
-                    tenantRentPrice: '',
-                    tenantLeasePrice: '',
-                    tenantVacateDate: '',
-                    sold: false,
-                    rentPrice: '80000000',
-                    leasePrice: '5000000',
-                    isVacant: false,
-                    vacateDate: '۱۴۰۵/۰۹/۱۵',
-                    isConvertible: true,
-                    isRented: false
-                }, {
-                    id: 4,
-                    type: 'rent',
-                    title: 'سوئیت استودیویی ۳۵ متری',
-                    desc: 'مرکز شهر، مبله مدرن',
-                    fullDesc: 'استودیوی مدرن در قلب شهر.',
-                    phones: ['۰۹۰۲۴۴۵۵۶۶۷'],
-                    images: [],
-                    area: 35,
-                    buildYear: 1401,
-                    bedrooms: 0,
-                    address: 'خیابان ولیعصر، برج آرین',
-                    specialFeatures: 'لوازم برقی جدید',
-                    parking: false,
-                    storage: false,
-                    elevator: false,
-                    gas: false,
-                    price: '',
-                    mortgage: '',
-                    hasTenant: false,
-                    tenantRentPrice: '',
-                    tenantLeasePrice: '',
-                    tenantVacateDate: '',
-                    sold: false,
-                    rentPrice: '45000000',
-                    leasePrice: '3000000',
-                    isVacant: true,
-                    vacateDate: '',
-                    isConvertible: false,
-                    isRented: true
-                }];
+                const samples = [
+                    { id: 1, type: 'buy', title: 'آپارتمان لاکچری ۱۵۰ متری', desc: 'برج دوقلو، سونا و جکوزی', fullDesc: 'آپارتمان مدرن با امکانات کامل.', phones: ['۰۹۱۲۱۱۱۲۲۳۳', '۰۹۰۳۳۴۴۵۵۶۶'], images: [], area: 150, buildYear: 1400, bedrooms: 3, address: 'خیابان ولیعصر، پلاک ۱۲', specialFeatures: 'سیستم امنیتی، استخر', parking: true, storage: true, elevator: true, gas: true, price: '3200000000', mortgage: '800000000', hasTenant: true, tenantRentPrice: '30000000', tenantLeasePrice: '2000000', tenantVacateDate: '۱۴۰۵/۱۲/۰۱', sold: false, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '', isConvertible: false, isRented: false },
+                    { id: 2, type: 'buy', title: 'خانه ویلایی ۳۰۰ متری', desc: 'باغچه ۱۰۰ متری، استخر شخصی', fullDesc: 'ویلایی دوبلکس با حیاط بزرگ.', phones: ['۰۹۱۲۳۳۴۴۵۵۶'], images: [], area: 300, buildYear: 1395, bedrooms: 4, address: 'خیابان پاسداران، پلاک ۸', specialFeatures: 'استخر اختصاصی، باغ میوه', parking: true, storage: false, elevator: false, gas: true, price: '5500000000', mortgage: '1200000000', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '', isConvertible: false, isRented: false },
+                    { id: 3, type: 'rent', title: 'آپارتمان ۷۰ متری مبله', desc: 'نزدیک دانشگاه، اجاره کوتاه‌مدت', fullDesc: 'آپارتمان مبله و آماده تحویل.', phones: ['۰۹۱۲۴۴۵۵۶۶۷', '۰۹۰۱۲۳۴۵۶۷۸'], images: [], area: 70, buildYear: 1398, bedrooms: 1, address: 'خیابان انقلاب، پلاک ۴۵', specialFeatures: 'مبله کامل، اینترنت', parking: false, storage: false, elevator: true, gas: true, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '80000000', leasePrice: '5000000', isVacant: false, vacateDate: '۱۴۰۵/۰۹/۱۵', isConvertible: true, isRented: false },
+                    { id: 4, type: 'rent', title: 'سوئیت استودیویی ۳۵ متری', desc: 'مرکز شهر، مبله مدرن', fullDesc: 'استودیوی مدرن در قلب شهر.', phones: ['۰۹۰۲۴۴۵۵۶۶۷'], images: [], area: 35, buildYear: 1401, bedrooms: 0, address: 'خیابان ولیعصر، برج آرین', specialFeatures: 'لوازم برقی جدید', parking: false, storage: false, elevator: false, gas: false, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '45000000', leasePrice: '3000000', isVacant: true, vacateDate: '', isConvertible: false, isRented: true }
+                ];
                 await saveProperties(samples);
             }
         }
@@ -1410,23 +524,14 @@
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.onload = function() {
-                    let width = img.width;
-                    let height = img.height;
-                    if (width > maxWidth) {
-                        height = (maxWidth / width) * height;
-                        width = maxWidth;
-                    }
-                    if (height > maxHeight) {
-                        width = (maxHeight / height) * width;
-                        height = maxHeight;
-                    }
+                    let width = img.width, height = img.height;
+                    if (width > maxWidth) { height = (maxWidth / width) * height; width = maxWidth; }
+                    if (height > maxHeight) { width = (maxHeight / height) * width; height = maxHeight; }
                     const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
+                    canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    const compressed = canvas.toDataURL('image/jpeg', quality);
-                    resolve(compressed);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
                 };
                 img.onerror = reject;
                 img.src = imageData;
@@ -1436,10 +541,7 @@
         // ================================================================
         //  متغیرهای اصلی
         // ================================================================
-        let currentType = 'buy';
-        let currentUser = null;
-        let editingId = null;
-        let editImages = [];
+        let currentType = 'buy', currentUser = null, editingId = null, editImages = [];
 
         const loginSection = document.getElementById('loginSection');
         const manageSection = document.getElementById('manageSection');
@@ -1489,7 +591,6 @@
         const formTenantVacateDate = document.getElementById('formTenantVacateDate');
         const soldStatusWrapper = document.getElementById('soldStatusWrapper');
         const formSold = document.getElementById('formSold');
-
         const formRentPrice = document.getElementById('formRentPrice');
         const formLeasePrice = document.getElementById('formLeasePrice');
         const formIsVacant = document.getElementById('formIsVacant');
@@ -1554,18 +655,15 @@
         });
         formIsVacant.addEventListener('change', toggleVacateFields);
 
-        // ================================================================
-        //  مدیریت شماره تماس‌ها
-        // ================================================================
         function renderPhoneInputs(phones = ['']) {
             phonesContainer.innerHTML = '';
             phones.forEach((phone, index) => {
                 const div = document.createElement('div');
                 div.className = 'phone-group';
                 div.innerHTML = `
-                            <input type="text" class="phone-input" value="${phone}" placeholder="مثال: ۰۹۱۲۱۱۱۲۲۳۳" />
-                            ${phones.length > 1 ? '<button type="button" class="remove-phone" data-index="'+index+'">✕</button>' : ''}
-                        `;
+                    <input type="text" class="phone-input" value="${phone}" placeholder="مثال: ۰۹۱۲۱۱۱۲۲۳۳" />
+                    ${phones.length > 1 ? '<button type="button" class="remove-phone" data-index="'+index+'">✕</button>' : ''}
+                `;
                 phonesContainer.appendChild(div);
             });
             phonesContainer.querySelectorAll('.remove-phone').forEach(btn => {
@@ -1593,9 +691,6 @@
             return Array.from(inputs).map(inp => inp.value.trim()).filter(p => p !== '');
         }
 
-        // ================================================================
-        //  پیش‌نمایش عکس‌ها
-        // ================================================================
         function renderImagePreview(images) {
             imagePreviewContainer.innerHTML = '';
             if (!images || images.length === 0) {
@@ -1607,9 +702,9 @@
                 const div = document.createElement('div');
                 div.className = 'img-preview';
                 div.innerHTML = `
-                            <img src="${img}" alt="عکس ${index+1}" />
-                            <button type="button" class="remove-img" data-index="${index}">✕</button>
-                        `;
+                    <img src="${img}" alt="عکس ${index+1}" />
+                    <button type="button" class="remove-img" data-index="${index}">✕</button>
+                `;
                 imagePreviewContainer.appendChild(div);
             });
             imagePreviewContainer.querySelectorAll('.remove-img').forEach(btn => {
@@ -1621,9 +716,6 @@
             });
         }
 
-        // ================================================================
-        //  مدیریت وضعیت UI
-        // ================================================================
         function updateUI() {
             if (currentUser) {
                 loginSection.classList.add('hidden');
@@ -1639,9 +731,6 @@
             renderProperties();
         }
 
-        // ================================================================
-        //  رندر کارت‌ها
-        // ================================================================
         async function renderProperties() {
             const all = await getProperties();
             const filtered = all.filter(p => p.type === currentType);
@@ -1652,26 +741,21 @@
             let html = '';
             filtered.forEach(item => {
                 let statusBadge = '';
-                if (item.type === 'buy' && item.sold) {
-                    statusBadge = `<div class="sold-overlay"><span>❌ فروخته شد</span></div>`;
-                } else if (item.type === 'rent' && item.isRented) {
-                    statusBadge = `<div class="sold-overlay"><span>🏷️ رهن داده شد</span></div>`;
-                }
+                if (item.type === 'buy' && item.sold) statusBadge = `<div class="sold-overlay"><span>❌ فروخته شد</span></div>`;
+                else if (item.type === 'rent' && item.isRented) statusBadge = `<div class="sold-overlay"><span>🏷️ رهن داده شد</span></div>`;
 
-                const firstImg = item.images && item.images.length > 0 && item.images[0].startsWith('data:') ? item
-                    .images[0] : null;
-                const bgStyle = firstImg ? `background-image: url('${firstImg}');` :
-                    `background: linear-gradient(145deg, #4a6a80, #1e3c5c);`;
+                const firstImg = item.images && item.images.length > 0 && item.images[0].startsWith('data:') ? item.images[0] : null;
+                const bgStyle = firstImg ? `background-image: url('${firstImg}');` : `background: linear-gradient(145deg, #4a6a80, #1e3c5c);`;
 
                 let adminActions = '';
                 if (currentUser) {
                     adminActions = `
-                            <div class="admin-actions">
-                                <button class="sold-btn" data-id="${item.id}" data-action="toggleStatus">${item.type === 'buy' ? (item.sold ? '🔁 لغو فروش' : '🏷️ فروش رفت') : (item.isRented ? '🔁 لغو رهن' : '🏷️ رهن داده شد')}</button>
-                                <button class="edit-btn" data-id="${item.id}" data-action="edit">✏️ ویرایش</button>
-                                <button class="delete-btn" data-id="${item.id}" data-action="delete">🗑️ حذف</button>
-                            </div>
-                        `;
+                        <div class="admin-actions">
+                            <button class="sold-btn" data-id="${item.id}" data-action="toggleStatus">${item.type === 'buy' ? (item.sold ? '🔁 لغو فروش' : '🏷️ فروش رفت') : (item.isRented ? '🔁 لغو رهن' : '🏷️ رهن داده شد')}</button>
+                            <button class="edit-btn" data-id="${item.id}" data-action="edit">✏️ ویرایش</button>
+                            <button class="delete-btn" data-id="${item.id}" data-action="delete">🗑️ حذف</button>
+                        </div>
+                    `;
                 }
 
                 const imgCount = item.images && item.images.length > 0 ? item.images.length : 0;
@@ -1692,20 +776,20 @@
                 }
 
                 html += `
-                        <div class="property-card" data-id="${item.id}">
-                            ${statusBadge}
-                            <div class="property-image" style="${bgStyle}">${firstImg ? '' : '🏠 ملک'}</div>
-                            <div class="card-body">
-                                <span class="badge">${item.type === 'buy' ? 'فروش ویژه' : 'اجاره'}</span>
-                                ${imgBadge}
-                                <h3>${item.title}</h3>
-                                <p class="desc">${item.desc || ''}</p>
-                                <div class="price">💰 ${displayPrice}</div>
-                                <div style="margin:5px 0;">${phonesHtml}</div>
-                                ${adminActions}
-                            </div>
+                    <div class="property-card" data-id="${item.id}">
+                        ${statusBadge}
+                        <div class="property-image" style="${bgStyle}">${firstImg ? '' : '🏠 ملک'}</div>
+                        <div class="card-body">
+                            <span class="badge">${item.type === 'buy' ? 'فروش ویژه' : 'اجاره'}</span>
+                            ${imgBadge}
+                            <h3>${item.title}</h3>
+                            <p class="desc">${item.desc || ''}</p>
+                            <div class="price">💰 ${displayPrice}</div>
+                            <div style="margin:5px 0;">${phonesHtml}</div>
+                            ${adminActions}
                         </div>
-                    `;
+                    </div>
+                `;
             });
             grid.innerHTML = html;
 
@@ -1726,27 +810,22 @@
             }
         }
 
-        // ================================================================
-        //  نمایش جزئیات
-        // ================================================================
         async function showDetail(id) {
             const all = await getProperties();
             const item = all.find(p => p.id === id);
             if (!item) return;
 
-            const images = item.images && item.images.length > 0 ?
-                item.images.filter(img => img && img.startsWith('data:')) :
-                [];
+            const images = item.images && item.images.length > 0 ? item.images.filter(img => img && img.startsWith('data:')) : [];
             let sliderHtml = '';
             if (images.length > 0) {
                 sliderHtml = `
-                        <div class="slider-container" id="sliderContainer">
-                            <img id="sliderImage" src="${images[0]}" alt="${item.title}" />
-                            <button class="slider-btn prev" id="sliderPrev">❮</button>
-                            <button class="slider-btn next" id="sliderNext">❯</button>
-                        </div>
-                        <div class="slider-indicators" id="sliderIndicators">۱ / ${images.length}</div>
-                    `;
+                    <div class="slider-container" id="sliderContainer">
+                        <img id="sliderImage" src="${images[0]}" alt="${item.title}" />
+                        <button class="slider-btn prev" id="sliderPrev">❮</button>
+                        <button class="slider-btn next" id="sliderNext">❯</button>
+                    </div>
+                    <div class="slider-indicators" id="sliderIndicators">۱ / ${images.length}</div>
+                `;
             } else {
                 sliderHtml = `<div class="slider-container"><div class="slide-placeholder">🏠 تصویری موجود نیست</div></div>`;
             }
@@ -1765,83 +844,57 @@
                 { label: 'آسانسور', value: item.elevator ? '✅ دارد' : '❌ ندارد' },
                 { label: 'گازکشی', value: item.gas ? '✅ دارد' : '❌ ندارد' }
             ];
-            let featuresHtml = features.map(f =>
-                `<div class="feature-item"><span class="label">${f.label}:</span> <span>${f.value}</span></div>`
-            ).join('');
+            let featuresHtml = features.map(f => `<div class="feature-item"><span class="label">${f.label}:</span> <span>${f.value}</span></div>`).join('');
 
             let buyDetails = '';
             if (item.type === 'buy') {
                 const priceD = formatNumberWithComma(item.price) + ' تومان';
                 const mortgageD = formatNumberWithComma(item.mortgage) + (item.mortgage ? ' تومان' : '');
                 buyDetails += `<div class="detail-price">💰 قیمت: ${priceD}</div>`;
-                if (item.mortgage) {
-                    buyDetails += `<div class="detail-mortgage">🏦 وام مسکن: ${mortgageD}</div>`;
-                }
+                if (item.mortgage) buyDetails += `<div class="detail-mortgage">🏦 وام مسکن: ${mortgageD}</div>`;
                 if (item.hasTenant) {
                     const r = formatNumberWithComma(item.tenantRentPrice);
                     const l = formatNumberWithComma(item.tenantLeasePrice);
                     buyDetails += `
-                            <div class="detail-tenant-info">
-                                <div class="tenant-label">👤 دارای مستاجر</div>
-                                <div>💰 رهن مستاجر: <strong>${r || 'نامشخص'} تومان</strong></div>
-                                <div>💰 اجاره مستاجر: <strong>${l || 'نامشخص'} تومان</strong></div>
-                                <div>📅 تاریخ تخلیه: <strong>${item.tenantVacateDate || 'نامشخص'}</strong></div>
-                            </div>
-                        `;
+                        <div class="detail-tenant-info">
+                            <div class="tenant-label">👤 دارای مستاجر</div>
+                            <div>💰 رهن مستاجر: <strong>${r || 'نامشخص'} تومان</strong></div>
+                            <div>💰 اجاره مستاجر: <strong>${l || 'نامشخص'} تومان</strong></div>
+                            <div>📅 تاریخ تخلیه: <strong>${item.tenantVacateDate || 'نامشخص'}</strong></div>
+                        </div>
+                    `;
                 }
-                if (item.sold) {
-                    buyDetails +=
-                        `<div style="background:#e74c3c; color:#fff; padding:10px; border-radius:12px; text-align:center; font-weight:bold;">❌ این ملک فروخته شده است</div>`;
-                }
+                if (item.sold) buyDetails += `<div style="background:#e74c3c; color:#fff; padding:10px; border-radius:12px; text-align:center; font-weight:bold;">❌ این ملک فروخته شده است</div>`;
             }
 
             let rentDetails = '';
             if (item.type === 'rent') {
                 const r = formatNumberWithComma(item.rentPrice);
                 const l = formatNumberWithComma(item.leasePrice);
-                rentDetails += `
-                        <div class="detail-price">💰 رهن: ${r} / اجاره: ${l} تومان</div>
-                    `;
-                if (item.isVacant) {
-                    rentDetails +=
-                        `<div style="background:#d5f5e3; padding:10px; border-radius:12px; margin:10px 0;">✅ ملک تخلیه می‌باشد (خالی است)</div>`;
-                } else if (item.vacateDate) {
-                    rentDetails +=
-                        `<div style="background:#fdebd0; padding:10px; border-radius:12px; margin:10px 0;">📅 تاریخ تخلیه: <strong>${item.vacateDate}</strong></div>`;
-                }
-                if (item.isConvertible) {
-                    rentDetails +=
-                        `<div class="detail-convertible">🔄 این ملک قابلیت تبدیل شرایط رهن/اجاره را دارد (قابل مذاکره).</div>`;
-                }
-                if (item.isRented) {
-                    rentDetails +=
-                        `<div style="background:#e74c3c; color:#fff; padding:10px; border-radius:12px; text-align:center; font-weight:bold;">🏷️ این ملک رهن داده شده است</div>`;
-                }
+                rentDetails += `<div class="detail-price">💰 رهن: ${r} / اجاره: ${l} تومان</div>`;
+                if (item.isVacant) rentDetails += `<div style="background:#d5f5e3; padding:10px; border-radius:12px; margin:10px 0;">✅ ملک تخلیه می‌باشد (خالی است)</div>`;
+                else if (item.vacateDate) rentDetails += `<div style="background:#fdebd0; padding:10px; border-radius:12px; margin:10px 0;">📅 تاریخ تخلیه: <strong>${item.vacateDate}</strong></div>`;
+                if (item.isConvertible) rentDetails += `<div class="detail-convertible">🔄 این ملک قابلیت تبدیل شرایط رهن/اجاره را دارد (قابل مذاکره).</div>`;
+                if (item.isRented) rentDetails += `<div style="background:#e74c3c; color:#fff; padding:10px; border-radius:12px; text-align:center; font-weight:bold;">🏷️ این ملک رهن داده شده است</div>`;
             }
 
             let addressHtml = '';
-            if (item.address) {
-                addressHtml =
-                    `<div class="detail-address"><strong>📍 نشانی:</strong> ${item.address}</div>`;
-            }
+            if (item.address) addressHtml = `<div class="detail-address"><strong>📍 نشانی:</strong> ${item.address}</div>`;
 
             let specialHtml = '';
-            if (item.specialFeatures) {
-                specialHtml =
-                    `<div class="detail-special"><strong>✨ امکانات ویژه:</strong> ${item.specialFeatures}</div>`;
-            }
+            if (item.specialFeatures) specialHtml = `<div class="detail-special"><strong>✨ امکانات ویژه:</strong> ${item.specialFeatures}</div>`;
 
             detailBody.innerHTML = `
-                        ${sliderHtml}
-                        <h2>${item.title}</h2>
-                        ${phonesList}
-                        ${addressHtml}
-                        ${buyDetails}
-                        ${rentDetails}
-                        <div class="detail-desc">${item.fullDesc || item.desc || ''}</div>
-                        ${specialHtml}
-                        <div class="detail-features">${featuresHtml}</div>
-                    `;
+                ${sliderHtml}
+                <h2>${item.title}</h2>
+                ${phonesList}
+                ${addressHtml}
+                ${buyDetails}
+                ${rentDetails}
+                <div class="detail-desc">${item.fullDesc || item.desc || ''}</div>
+                ${specialHtml}
+                <div class="detail-features">${featuresHtml}</div>
+            `;
 
             document.getElementById('detailModal').classList.add('open');
             document.body.style.overflow = 'hidden';
@@ -1860,10 +913,8 @@
                     imgEl.src = images[currentIndex];
                     indicators.textContent = `${currentIndex + 1} / ${images.length}`;
                 }
-                prevBtn.addEventListener('click', function(e) { e.stopPropagation();
-                    updateSlider(currentIndex - 1); });
-                nextBtn.addEventListener('click', function(e) { e.stopPropagation();
-                    updateSlider(currentIndex + 1); });
+                prevBtn.addEventListener('click', function(e) { e.stopPropagation(); updateSlider(currentIndex - 1); });
+                nextBtn.addEventListener('click', function(e) { e.stopPropagation(); updateSlider(currentIndex + 1); });
                 document.addEventListener('keydown', function keyHandler(e) {
                     if (!document.getElementById('detailModal').classList.contains('open')) return;
                     if (e.key === 'ArrowLeft') updateSlider(currentIndex - 1);
@@ -1881,9 +932,6 @@
             if (e.target === this) closeDetailModal();
         });
 
-        // ================================================================
-        //  مدیریت ادمین
-        // ================================================================
         async function handleAdminAction(id, action) {
             const all = await getProperties();
             const index = all.findIndex(p => p.id === id);
@@ -1898,24 +946,16 @@
 
             if (action === 'toggleStatus') {
                 const item = all[index];
-                if (item.type === 'buy') {
-                    item.sold = !item.sold;
-                } else {
-                    item.isRented = !item.isRented;
-                }
+                if (item.type === 'buy') item.sold = !item.sold;
+                else item.isRented = !item.isRented;
                 await saveProperties(all);
                 renderProperties();
                 return;
             }
 
-            if (action === 'edit') {
-                openModal(all[index]);
-            }
+            if (action === 'edit') openModal(all[index]);
         }
 
-        // ================================================================
-        //  باز کردن مودال
-        // ================================================================
         function openModal(property = null) {
             if (!currentUser) return;
             editingId = property ? property.id : null;
@@ -1938,11 +978,7 @@
             formElevator.checked = property ? property.elevator : false;
             formGas.checked = property ? property.gas : false;
 
-            if (property) {
-                editImages = (property.images && property.images.length > 0) ? property.images : [];
-            } else {
-                editImages = [];
-            }
+            editImages = (property && property.images) ? property.images : [];
             renderImagePreview(editImages);
             formImages.value = '';
 
@@ -1983,7 +1019,7 @@
         modalProperty.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
         // ================================================================
-        //  ذخیره فرم (با اتصال به ابر)
+        //  ذخیره فرم
         // ================================================================
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -2008,23 +1044,7 @@
                 return;
             }
 
-            let propertyData = {
-                type,
-                title,
-                desc,
-                fullDesc,
-                phones,
-                area,
-                buildYear,
-                bedrooms,
-                address,
-                specialFeatures,
-                parking,
-                storage,
-                elevator,
-                gas,
-                images: []
-            };
+            let propertyData = { type, title, desc, fullDesc, phones, area, buildYear, bedrooms, address, specialFeatures, parking, storage, elevator, gas, images: [] };
 
             if (type === 'buy') {
                 const price = formPrice.value.trim().replace(/,/g, '');
@@ -2036,22 +1056,7 @@
                 const sold = formSold.checked;
 
                 if (!price) { alert('لطفاً قیمت فروش را وارد کنید.'); return; }
-                propertyData = {
-                    ...propertyData,
-                    price,
-                    mortgage,
-                    hasTenant,
-                    tenantRentPrice,
-                    tenantLeasePrice,
-                    tenantVacateDate,
-                    sold,
-                    rentPrice: '',
-                    leasePrice: '',
-                    isVacant: false,
-                    vacateDate: '',
-                    isConvertible: false,
-                    isRented: false
-                };
+                propertyData = { ...propertyData, price, mortgage, hasTenant, tenantRentPrice, tenantLeasePrice, tenantVacateDate, sold, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '', isConvertible: false, isRented: false };
             } else {
                 const rentPrice = formRentPrice.value.trim().replace(/,/g, '');
                 const leasePrice = formLeasePrice.value.trim().replace(/,/g, '');
@@ -2061,29 +1066,12 @@
                 const isRented = formIsRented.checked;
 
                 if (!rentPrice || !leasePrice) { alert('لطفاً مبلغ رهن و اجاره را وارد کنید.'); return; }
-                propertyData = {
-                    ...propertyData,
-                    rentPrice,
-                    leasePrice,
-                    isVacant,
-                    vacateDate,
-                    isConvertible,
-                    isRented,
-                    price: '',
-                    mortgage: '',
-                    hasTenant: false,
-                    tenantRentPrice: '',
-                    tenantLeasePrice: '',
-                    tenantVacateDate: '',
-                    sold: false
-                };
+                propertyData = { ...propertyData, rentPrice, leasePrice, isVacant, vacateDate, isConvertible, isRented, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false };
             }
 
             const files = formImages.files;
             let allImages = [];
-            if (editImages && editImages.length > 0) {
-                allImages = [...editImages];
-            }
+            if (editImages && editImages.length > 0) allImages = [...editImages];
 
             if (files && files.length > 0) {
                 try {
@@ -2101,7 +1089,7 @@
                     }
                     allImages = [...allImages, ...compressedImages];
                 } catch (error) {
-                    alert('خطا در خواندن یا فشرده‌سازی عکس! لطفاً دوباره تلاش کنید.');
+                    alert('خطا در خواندن یا فشرده‌سازی عکس!');
                     return;
                 }
             }
@@ -2131,7 +1119,7 @@
         });
 
         // ================================================================
-        //  مدیریت پس‌زمینه
+        //  مدیریت پس‌زمینه، آدرس، ادمین و ...
         // ================================================================
         bgSettingsBtn.addEventListener('click', function() {
             if (currentUser) document.getElementById('bgModal').classList.add('open');
@@ -2167,9 +1155,6 @@
             }
         });
 
-        // ================================================================
-        //  مدیریت آدرس دفتر
-        // ================================================================
         editOfficeBtn.addEventListener('click', function() {
             if (!currentUser) return;
             const data = getOfficeData();
@@ -2193,9 +1178,6 @@
             alert('آدرس دفتر با موفقیت به‌روزرسانی شد.');
         });
 
-        // ================================================================
-        //  ثبت‌نام و حذف ادمین
-        // ================================================================
         addAdminBtn.addEventListener('click', function() {
             if (currentUser && currentUser.isSuperAdmin) {
                 document.getElementById('addAdminModal').classList.add('open');
@@ -2236,12 +1218,12 @@
             let html = '';
             admins.forEach(admin => {
                 html += `
-                            <div class="admin-list-item">
-                                <span class="phone">📱 ${admin.phone}</span>
-                                <span class="role-badge">ادمین</span>
-                                <button class="remove-btn" data-phone="${admin.phone}">❌ حذف</button>
-                            </div>
-                        `;
+                    <div class="admin-list-item">
+                        <span class="phone">📱 ${admin.phone}</span>
+                        <span class="role-badge">ادمین</span>
+                        <button class="remove-btn" data-phone="${admin.phone}">❌ حذف</button>
+                    </div>
+                `;
             });
             container.innerHTML = html;
             container.querySelectorAll('.remove-btn').forEach(btn => {

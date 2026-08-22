@@ -332,53 +332,128 @@
 
     <script>
         // ================================================================
-        //  دیتابیس ابری (JSONBin)
+        //  دیتابیس در خود گیت‌هاب (با GitHub API)
         // ================================================================
-        const API_URL = 'https://api.jsonbin.io/v3/b/67a8f8a9acd3cb34a8e0c5d8';
-        const API_KEY = '$2a$10$1n.2jL.3kVx4W5Y6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9';
+        // ===== تنظیمات - با توکن شما =====
+        const GITHUB_USERNAME = '01alpha1379';
+        const GITHUB_REPO = 'melk-site3';
+        const GITHUB_TOKEN = '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';
+        // ================================================================
+
+        const DATA_FILE_PATH = 'data.json';
+        const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${DATA_FILE_PATH}`;
 
         // ================================================================
-        //  توابع ارتباط با JSONBin
+        //  توابع خواندن و نوشتن در گیت‌هاب
         // ================================================================
-        async function loadPropertiesFromCloud() {
+        let currentFileSha = null;
+
+        async function loadPropertiesFromGitHub() {
             try {
                 const response = await fetch(API_URL, {
-                    headers: { 'X-Master-Key': API_KEY }
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
                 });
-                if (!response.ok) {
-                    console.warn('خطا در دریافت داده از سرور، استفاده از کش محلی');
-                    return null;
+
+                if (response.status === 404) {
+                    await createEmptyDataFile();
+                    return [];
                 }
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
-                return data.record || [];
+                currentFileSha = data.sha;
+                const content = atob(data.content);
+                return JSON.parse(content);
             } catch (error) {
-                console.error('خطا در بارگذاری:', error);
+                console.error('خطا در بارگذاری از گیت‌هاب:', error);
                 return null;
             }
         }
 
-        async function savePropertiesToCloud(properties) {
+        async function createEmptyDataFile() {
             try {
                 const response = await fetch(API_URL, {
                     method: 'PUT',
                     headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
                         'Content-Type': 'application/json',
-                        'X-Master-Key': API_KEY
+                        'Accept': 'application/vnd.github.v3+json'
                     },
-                    body: JSON.stringify(properties)
+                    body: JSON.stringify({
+                        message: 'ایجاد فایل داده اولیه',
+                        content: btoa('[]'),
+                        branch: 'main'
+                    })
                 });
+
                 if (!response.ok) {
-                    throw new Error('خطا در ذخیره داده در سرور');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
+                const data = await response.json();
+                currentFileSha = data.content.sha;
+                console.log('فایل داده با موفقیت ایجاد شد.');
                 return true;
             } catch (error) {
-                console.error('خطا در ذخیره:', error);
+                console.error('خطا در ایجاد فایل داده:', error);
+                return false;
+            }
+        }
+
+        async function savePropertiesToGitHub(properties) {
+            try {
+                const getResponse = await fetch(API_URL, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                let sha = currentFileSha;
+                if (getResponse.ok) {
+                    const data = await getResponse.json();
+                    sha = data.sha;
+                }
+
+                const content = btoa(JSON.stringify(properties, null, 2));
+
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: 'به‌روزرسانی داده‌های ملک‌ها',
+                        content: content,
+                        sha: sha,
+                        branch: 'main'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                currentFileSha = data.content.sha;
+                console.log('داده‌ها با موفقیت در گیت‌هاب ذخیره شدند.');
+                return true;
+            } catch (error) {
+                console.error('خطا در ذخیره در گیت‌هاب:', error);
                 return false;
             }
         }
 
         // ================================================================
-        //  دیتابیس محلی
+        //  دیتابیس محلی (با پشتیبانی از گیت‌هاب)
         // ================================================================
         const STORAGE_KEY = 'realEstateProperties';
         const BG_STORAGE_KEY = 'siteBackground';
@@ -449,13 +524,13 @@
             }
 
             try {
-                const cloudData = await loadPropertiesFromCloud();
-                if (cloudData && cloudData.length > 0) {
-                    cachedProperties = cloudData;
+                const gitData = await loadPropertiesFromGitHub();
+                if (gitData !== null && gitData.length > 0) {
+                    cachedProperties = gitData;
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedProperties));
                 }
             } catch (e) {
-                console.log('خطا در دریافت از ابر، استفاده از کش محلی');
+                console.log('خطا در دریافت از گیت‌هاب، استفاده از کش محلی');
             }
             return cachedProperties;
         }
@@ -463,9 +538,12 @@
         async function saveProperties(properties) {
             cachedProperties = properties;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
-            const success = await savePropertiesToCloud(properties);
+
+            const success = await savePropertiesToGitHub(properties);
             if (!success) {
-                alert('⚠️ داده‌ها در مرورگر شما ذخیره شدند ولی در سرور ذخیره نشدند! لطفاً دوباره تلاش کنید.');
+                alert('⚠️ داده‌ها در مرورگر شما ذخیره شدند ولی در گیت‌هاب ذخیره نشدند! لطفاً توکن خود را بررسی کنید.');
+            } else {
+                alert('✅ داده‌ها با موفقیت در گیت‌هاب ذخیره شدند!');
             }
             return success;
         }

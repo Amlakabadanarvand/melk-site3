@@ -8,7 +8,6 @@
     <meta http-equiv="Expires" content="0" />
     <title>دفتر املاک آبادان اروند</title>
     <style>
-        /* تمام استایل‌های قبلی */
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Tahoma',sans-serif; }
         body { padding:20px; min-height:100vh; background:#f0f4f8; background-size:cover; background-position:center; background-attachment:fixed; }
         body::before { content:''; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(210,215,220,0.55); z-index:0; pointer-events:none; }
@@ -235,142 +234,135 @@
 
     <script>
         // ================================================================
-        //  داده‌های ثابت (همه ملک‌ها در اینجا ذخیره می‌شوند)
+        //  دیتابیس در خود گیت‌هاب (با GitHub API و توکن جدید شما)
         // ================================================================
-        // ===== اینجا ملک‌های خود را اضافه یا ویرایش کنید =====
-        const STATIC_PROPERTIES = [
-            {
-                id: 1,
-                type: 'buy',
-                title: 'آپارتمان لاکچری ۱۵۰ متری',
-                desc: 'برج دوقلو، سونا و جکوزی',
-                fullDesc: 'آپارتمان مدرن با امکانات کامل.',
-                phones: ['۰۹۱۲۱۱۱۲۲۳۳', '۰۹۰۳۳۴۴۵۵۶۶'],
-                images: [],
-                area: 150,
-                buildYear: 1400,
-                bedrooms: 3,
-                address: 'خیابان ولیعصر، پلاک ۱۲',
-                specialFeatures: 'سیستم امنیتی، استخر',
-                parking: true,
-                storage: true,
-                elevator: true,
-                gas: true,
-                price: '3200000000',
-                mortgage: '800000000',
-                hasTenant: true,
-                tenantRentPrice: '30000000',
-                tenantLeasePrice: '2000000',
-                tenantVacateDate: '۱۴۰۵/۱۲/۰۱',
-                sold: false,
-                rentPrice: '',
-                leasePrice: '',
-                isVacant: false,
-                vacateDate: '',
-                isConvertible: false,
-                isRented: false
-            },
-            {
-                id: 2,
-                type: 'buy',
-                title: 'خانه ویلایی ۳۰۰ متری',
-                desc: 'باغچه ۱۰۰ متری، استخر شخصی',
-                fullDesc: 'ویلایی دوبلکس با حیاط بزرگ.',
-                phones: ['۰۹۱۲۳۳۴۴۵۵۶'],
-                images: [],
-                area: 300,
-                buildYear: 1395,
-                bedrooms: 4,
-                address: 'خیابان پاسداران، پلاک ۸',
-                specialFeatures: 'استخر اختصاصی، باغ میوه',
-                parking: true,
-                storage: false,
-                elevator: false,
-                gas: true,
-                price: '5500000000',
-                mortgage: '1200000000',
-                hasTenant: false,
-                tenantRentPrice: '',
-                tenantLeasePrice: '',
-                tenantVacateDate: '',
-                sold: false,
-                rentPrice: '',
-                leasePrice: '',
-                isVacant: false,
-                vacateDate: '',
-                isConvertible: false,
-                isRented: false
-            },
-            {
-                id: 3,
-                type: 'rent',
-                title: 'آپارتمان ۷۰ متری مبله',
-                desc: 'نزدیک دانشگاه، اجاره کوتاه‌مدت',
-                fullDesc: 'آپارتمان مبله و آماده تحویل.',
-                phones: ['۰۹۱۲۴۴۵۵۶۶۷', '۰۹۰۱۲۳۴۵۶۷۸'],
-                images: [],
-                area: 70,
-                buildYear: 1398,
-                bedrooms: 1,
-                address: 'خیابان انقلاب، پلاک ۴۵',
-                specialFeatures: 'مبله کامل، اینترنت',
-                parking: false,
-                storage: false,
-                elevator: true,
-                gas: true,
-                price: '',
-                mortgage: '',
-                hasTenant: false,
-                tenantRentPrice: '',
-                tenantLeasePrice: '',
-                tenantVacateDate: '',
-                sold: false,
-                rentPrice: '80000000',
-                leasePrice: '5000000',
-                isVacant: false,
-                vacateDate: '۱۴۰۵/۰۹/۱۵',
-                isConvertible: true,
-                isRented: false
-            },
-            {
-                id: 4,
-                type: 'rent',
-                title: 'سوئیت استودیویی ۳۵ متری',
-                desc: 'مرکز شهر، مبله مدرن',
-                fullDesc: 'استودیوی مدرن در قلب شهر.',
-                phones: ['۰۹۰۲۴۴۵۵۶۶۷'],
-                images: [],
-                area: 35,
-                buildYear: 1401,
-                bedrooms: 0,
-                address: 'خیابان ولیعصر، برج آرین',
-                specialFeatures: 'لوازم برقی جدید',
-                parking: false,
-                storage: false,
-                elevator: false,
-                gas: false,
-                price: '',
-                mortgage: '',
-                hasTenant: false,
-                tenantRentPrice: '',
-                tenantLeasePrice: '',
-                tenantVacateDate: '',
-                sold: false,
-                rentPrice: '45000000',
-                leasePrice: '3000000',
-                isVacant: true,
-                vacateDate: '',
-                isConvertible: false,
-                isRented: true
+        const GITHUB_USERNAME = '01alpha1379';
+        const GITHUB_REPO = 'melk-site3';
+        const GITHUB_TOKEN = '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';
+
+        const DATA_FILE_PATH = 'data.json';
+        const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${DATA_FILE_PATH}`;
+
+        let currentFileSha = null;
+
+        // ================================================================
+        //  توابع خواندن و نوشتن در گیت‌هاب (رفع باگ btoa)
+        // ================================================================
+        async function loadPropertiesFromGitHub() {
+            try {
+                const response = await fetch(API_URL, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (response.status === 404) {
+                    await createEmptyDataFile();
+                    return [];
+                }
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                currentFileSha = data.sha;
+                const content = atob(data.content);
+                return JSON.parse(content);
+            } catch (error) {
+                console.error('خطا در بارگذاری از گیت‌هاب:', error);
+                return null;
             }
-        ];
+        }
+
+        async function createEmptyDataFile() {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: 'ایجاد فایل داده اولیه',
+                        content: btoa('[]'),
+                        branch: 'main'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                currentFileSha = data.content.sha;
+                console.log('فایل داده با موفقیت ایجاد شد.');
+                return true;
+            } catch (error) {
+                console.error('خطا در ایجاد فایل داده:', error);
+                return false;
+            }
+        }
+
+        async function savePropertiesToGitHub(properties) {
+            try {
+                const getResponse = await fetch(API_URL, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                let sha = currentFileSha;
+                if (getResponse.ok) {
+                    const data = await getResponse.json();
+                    sha = data.sha;
+                }
+
+                // ===== رفع باگ btoa با encodeURIComponent =====
+                const jsonString = JSON.stringify(properties);
+                const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        message: 'به‌روزرسانی داده‌های ملک‌ها',
+                        content: base64Content,
+                        sha: sha,
+                        branch: 'main'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                currentFileSha = data.content.sha;
+                console.log('داده‌ها با موفقیت در گیت‌هاب ذخیره شدند.');
+                return true;
+            } catch (error) {
+                console.error('خطا در ذخیره در گیت‌هاب:', error);
+                return false;
+            }
+        }
+
         // ================================================================
-        //  دیتابیس محلی (با پشتیبانی از داده‌های ثابت)
+        //  دیتابیس محلی (با پشتیبانی از گیت‌هاب)
         // ================================================================
         const STORAGE_KEY = 'realEstateProperties';
         const BG_STORAGE_KEY = 'siteBackground';
         const USERS_STORAGE_KEY = 'realEstateUsers';
         const OFFICE_STORAGE_KEY = 'officeAddressData';
+
+        let cachedProperties = [];
 
         function getUsers() {
             const data = localStorage.getItem(USERS_STORAGE_KEY);
@@ -380,18 +372,24 @@
                 password: '2420361687',
                 isSuperAdmin: true
             };
-            const idx = users.findIndex(u => u.phone === newSuperAdmin.phone);
-            if (idx !== -1) users[idx] = newSuperAdmin;
-            else { users = users.filter(u => u.phone !== 'admin');
-                users.push(newSuperAdmin); }
+            const existingIndex = users.findIndex(u => u.phone === newSuperAdmin.phone);
+            if (existingIndex !== -1) {
+                users[existingIndex] = newSuperAdmin;
+            } else {
+                users = users.filter(u => u.phone !== 'admin');
+                users.push(newSuperAdmin);
+            }
             saveUsers(users);
             return users;
         }
 
-        function saveUsers(u) { localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(u)); }
+        function saveUsers(users) {
+            localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+        }
 
         function findUser(phone, password) {
-            return getUsers().find(u => u.phone === phone && u.password === password) || null;
+            const users = getUsers();
+            return users.find(u => u.phone === phone && u.password === password) || null;
         }
 
         function addUser(phone, password) {
@@ -411,10 +409,66 @@
             return true;
         }
 
-        function isPhoneExists(phone) { return getUsers().some(u => u.phone === phone); }
+        function isPhoneExists(phone) {
+            const users = getUsers();
+            return users.some(u => u.phone === phone);
+        }
 
-        function getRegularAdmins() { return getUsers().filter(u => !u.isSuperAdmin); }
+        function getRegularAdmins() {
+            const users = getUsers();
+            return users.filter(u => !u.isSuperAdmin);
+        }
 
+        async function getProperties() {
+            const localData = localStorage.getItem(STORAGE_KEY);
+            if (localData) {
+                cachedProperties = JSON.parse(localData);
+            }
+
+            try {
+                const gitData = await loadPropertiesFromGitHub();
+                if (gitData !== null && gitData.length > 0) {
+                    cachedProperties = gitData;
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedProperties));
+                }
+            } catch (e) {
+                console.log('خطا در دریافت از گیت‌هاب، استفاده از کش محلی');
+            }
+            return cachedProperties;
+        }
+
+        async function saveProperties(properties) {
+            cachedProperties = properties;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
+
+            const success = await savePropertiesToGitHub(properties);
+            if (!success) {
+                alert('⚠️ داده‌ها در مرورگر شما ذخیره شدند ولی در گیت‌هاب ذخیره نشدند! لطفاً توکن خود را بررسی کنید.');
+            } else {
+                alert('✅ داده‌ها با موفقیت در گیت‌هاب ذخیره شدند!');
+            }
+            return success;
+        }
+
+        // ================================================================
+        //  داده نمونه
+        // ================================================================
+        async function initSampleData() {
+            const properties = await getProperties();
+            if (properties.length === 0) {
+                const samples = [
+                    { id: 1, type: 'buy', title: 'آپارتمان لاکچری ۱۵۰ متری', desc: 'برج دوقلو، سونا و جکوزی', fullDesc: 'آپارتمان مدرن با امکانات کامل.', phones: ['۰۹۱۲۱۱۱۲۲۳۳', '۰۹۰۳۳۴۴۵۵۶۶'], images: [], area: 150, buildYear: 1400, bedrooms: 3, address: 'خیابان ولیعصر، پلاک ۱۲', specialFeatures: 'سیستم امنیتی، استخر', parking: true, storage: true, elevator: true, gas: true, price: '3200000000', mortgage: '800000000', hasTenant: true, tenantRentPrice: '30000000', tenantLeasePrice: '2000000', tenantVacateDate: '۱۴۰۵/۱۲/۰۱', sold: false, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '', isConvertible: false, isRented: false },
+                    { id: 2, type: 'buy', title: 'خانه ویلایی ۳۰۰ متری', desc: 'باغچه ۱۰۰ متری، استخر شخصی', fullDesc: 'ویلایی دوبلکس با حیاط بزرگ.', phones: ['۰۹۱۲۳۳۴۴۵۵۶'], images: [], area: 300, buildYear: 1395, bedrooms: 4, address: 'خیابان پاسداران، پلاک ۸', specialFeatures: 'استخر اختصاصی، باغ میوه', parking: true, storage: false, elevator: false, gas: true, price: '5500000000', mortgage: '1200000000', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '', isConvertible: false, isRented: false },
+                    { id: 3, type: 'rent', title: 'آپارتمان ۷۰ متری مبله', desc: 'نزدیک دانشگاه، اجاره کوتاه‌مدت', fullDesc: 'آپارتمان مبله و آماده تحویل.', phones: ['۰۹۱۲۴۴۵۵۶۶۷', '۰۹۰۱۲۳۴۵۶۷۸'], images: [], area: 70, buildYear: 1398, bedrooms: 1, address: 'خیابان انقلاب، پلاک ۴۵', specialFeatures: 'مبله کامل، اینترنت', parking: false, storage: false, elevator: true, gas: true, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '80000000', leasePrice: '5000000', isVacant: false, vacateDate: '۱۴۰۵/۰۹/۱۵', isConvertible: true, isRented: false },
+                    { id: 4, type: 'rent', title: 'سوئیت استودیویی ۳۵ متری', desc: 'مرکز شهر، مبله مدرن', fullDesc: 'استودیوی مدرن در قلب شهر.', phones: ['۰۹۰۲۴۴۵۵۶۶۷'], images: [], area: 35, buildYear: 1401, bedrooms: 0, address: 'خیابان ولیعصر، برج آرین', specialFeatures: 'لوازم برقی جدید', parking: false, storage: false, elevator: false, gas: false, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '45000000', leasePrice: '3000000', isVacant: true, vacateDate: '', isConvertible: false, isRented: true }
+                ];
+                await saveProperties(samples);
+            }
+        }
+
+        // ================================================================
+        //  بقیه توابع (همانند قبل)
+        // ================================================================
         function getOfficeData() {
             const data = localStorage.getItem(OFFICE_STORAGE_KEY);
             if (data) return JSON.parse(data);
@@ -430,15 +484,20 @@
             const data = getOfficeData();
             document.getElementById('officeAddressText').textContent = data.address || 'آدرس دفتر را در پنل مدیریت تنظیم کنید';
             const locEl = document.getElementById('officeLocationDisplay');
-            if (data.location && data.location.trim() !== '') locEl.innerHTML =
-                ` <a href="${data.location}" target="_blank" class="location-link">🗺️ نقشه</a>`;
-            else locEl.innerHTML = '';
+            if (data.location && data.location.trim() !== '') {
+                locEl.innerHTML = ` <a href="${data.location}" target="_blank" class="location-link">🗺️ نقشه</a>`;
+            } else {
+                locEl.innerHTML = '';
+            }
         }
 
         function loadBackground() {
             const bg = localStorage.getItem(BG_STORAGE_KEY);
-            if (bg && bg.startsWith('data:')) document.body.style.backgroundImage = `url('${bg}')`;
-            else document.body.style.backgroundImage = '';
+            if (bg && bg.startsWith('data:')) {
+                document.body.style.backgroundImage = `url('${bg}')`;
+            } else {
+                document.body.style.backgroundImage = '';
+            }
         }
 
         function saveBackground(imageData) {
@@ -481,46 +540,13 @@
         }
 
         // ================================================================
-        //  توابع اصلی دیتابیس (با داده‌های ثابت)
-        // ================================================================
-        let cachedProperties = [];
-
-        async function getProperties() {
-            // همیشه داده‌های ثابت را به همراه ذخیره محلی ترکیب کن
-            const localData = localStorage.getItem(STORAGE_KEY);
-            let localProps = localData ? JSON.parse(localData) : [];
-
-            // اگر داده محلی وجود ندارد، از داده‌های ثابت استفاده کن
-            if (localProps.length === 0) {
-                localProps = JSON.parse(JSON.stringify(STATIC_PROPERTIES));
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(localProps));
-            }
-
-            cachedProperties = localProps;
-            return cachedProperties;
-        }
-
-        async function saveProperties(properties) {
-            cachedProperties = properties;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
-            alert('✅ داده‌ها با موفقیت در مرورگر ذخیره شدند!');
-            return true;
-        }
-
-        async function initSampleData() {
-            const properties = await getProperties();
-            if (properties.length === 0) {
-                await saveProperties(JSON.parse(JSON.stringify(STATIC_PROPERTIES)));
-            }
-        }
-
-        // ================================================================
         //  متغیرهای اصلی
         // ================================================================
         let currentType = 'buy',
             currentUser = null,
             editingId = null,
             editImages = [];
+
         const loginSection = document.getElementById('loginSection');
         const manageSection = document.getElementById('manageSection');
         const loginPhone = document.getElementById('loginPhone');
@@ -535,6 +561,7 @@
         const welcomeText = document.getElementById('welcomeText');
         const grid = document.getElementById('propertyGrid');
         const tabs = document.querySelectorAll('.tab-btn');
+
         const modalProperty = document.getElementById('propertyModal');
         const modalTitle = document.getElementById('modalTitle');
         const form = document.getElementById('propertyForm');
@@ -556,6 +583,7 @@
         const phonesContainer = document.getElementById('phonesContainer');
         const addPhoneBtn = document.getElementById('addPhoneBtn');
         const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
         const sectionBuy = document.getElementById('sectionBuy');
         const sectionRent = document.getElementById('sectionRent');
         const formPrice = document.getElementById('formPrice');
@@ -717,15 +745,11 @@
             let html = '';
             filtered.forEach(item => {
                 let statusBadge = '';
-                if (item.type === 'buy' && item.sold) statusBadge =
-                    `<div class="sold-overlay"><span>❌ فروخته شد</span></div>`;
-                else if (item.type === 'rent' && item.isRented) statusBadge =
-                    `<div class="sold-overlay"><span>🏷️ رهن داده شد</span></div>`;
+                if (item.type === 'buy' && item.sold) statusBadge = `<div class="sold-overlay"><span>❌ فروخته شد</span></div>`;
+                else if (item.type === 'rent' && item.isRented) statusBadge = `<div class="sold-overlay"><span>🏷️ رهن داده شد</span></div>`;
 
-                const firstImg = item.images && item.images.length > 0 && item.images[0].startsWith('data:') ? item
-                    .images[0] : null;
-                const bgStyle = firstImg ? `background-image: url('${firstImg}');` :
-                    `background: linear-gradient(145deg, #4a6a80, #1e3c5c);`;
+                const firstImg = item.images && item.images.length > 0 && item.images[0].startsWith('data:') ? item.images[0] : null;
+                const bgStyle = firstImg ? `background-image: url('${firstImg}');` : `background: linear-gradient(145deg, #4a6a80, #1e3c5c);`;
 
                 let adminActions = '';
                 if (currentUser) {
@@ -795,8 +819,7 @@
             const item = all.find(p => p.id === id);
             if (!item) return;
 
-            const images = item.images && item.images.length > 0 ? item.images.filter(img => img && img.startsWith(
-                'data:')) : [];
+            const images = item.images && item.images.length > 0 ? item.images.filter(img => img && img.startsWith('data:')) : [];
             let sliderHtml = '';
             if (images.length > 0) {
                 sliderHtml = `
@@ -825,9 +848,7 @@
                 { label: 'آسانسور', value: item.elevator ? '✅ دارد' : '❌ ندارد' },
                 { label: 'گازکشی', value: item.gas ? '✅ دارد' : '❌ ندارد' }
             ];
-            let featuresHtml = features.map(f =>
-                `<div class="feature-item"><span class="label">${f.label}:</span> <span>${f.value}</span></div>`
-            ).join('');
+            let featuresHtml = features.map(f => `<div class="feature-item"><span class="label">${f.label}:</span> <span>${f.value}</span></div>`).join('');
 
             let buyDetails = '';
             if (item.type === 'buy') {
@@ -847,8 +868,7 @@
                         </div>
                     `;
                 }
-                if (item.sold) buyDetails +=
-                    `<div style="background:#e74c3c; color:#fff; padding:10px; border-radius:12px; text-align:center; font-weight:bold;">❌ این ملک فروخته شده است</div>`;
+                if (item.sold) buyDetails += `<div style="background:#e74c3c; color:#fff; padding:10px; border-radius:12px; text-align:center; font-weight:bold;">❌ این ملک فروخته شده است</div>`;
             }
 
             let rentDetails = '';
@@ -856,22 +876,17 @@
                 const r = formatNumberWithComma(item.rentPrice);
                 const l = formatNumberWithComma(item.leasePrice);
                 rentDetails += `<div class="detail-price">💰 رهن: ${r} / اجاره: ${l} تومان</div>`;
-                if (item.isVacant) rentDetails +=
-                    `<div style="background:#d5f5e3; padding:10px; border-radius:12px; margin:10px 0;">✅ ملک تخلیه می‌باشد (خالی است)</div>`;
-                else if (item.vacateDate) rentDetails +=
-                    `<div style="background:#fdebd0; padding:10px; border-radius:12px; margin:10px 0;">📅 تاریخ تخلیه: <strong>${item.vacateDate}</strong></div>`;
-                if (item.isConvertible) rentDetails +=
-                    `<div class="detail-convertible">🔄 این ملک قابلیت تبدیل شرایط رهن/اجاره را دارد (قابل مذاکره).</div>`;
-                if (item.isRented) rentDetails +=
-                    `<div style="background:#e74c3c; color:#fff; padding:10px; border-radius:12px; text-align:center; font-weight:bold;">🏷️ این ملک رهن داده شده است</div>`;
+                if (item.isVacant) rentDetails += `<div style="background:#d5f5e3; padding:10px; border-radius:12px; margin:10px 0;">✅ ملک تخلیه می‌باشد (خالی است)</div>`;
+                else if (item.vacateDate) rentDetails += `<div style="background:#fdebd0; padding:10px; border-radius:12px; margin:10px 0;">📅 تاریخ تخلیه: <strong>${item.vacateDate}</strong></div>`;
+                if (item.isConvertible) rentDetails += `<div class="detail-convertible">🔄 این ملک قابلیت تبدیل شرایط رهن/اجاره را دارد (قابل مذاکره).</div>`;
+                if (item.isRented) rentDetails += `<div style="background:#e74c3c; color:#fff; padding:10px; border-radius:12px; text-align:center; font-weight:bold;">🏷️ این ملک رهن داده شده است</div>`;
             }
 
             let addressHtml = '';
             if (item.address) addressHtml = `<div class="detail-address"><strong>📍 نشانی:</strong> ${item.address}</div>`;
 
             let specialHtml = '';
-            if (item.specialFeatures) specialHtml =
-                `<div class="detail-special"><strong>✨ امکانات ویژه:</strong> ${item.specialFeatures}</div>`;
+            if (item.specialFeatures) specialHtml = `<div class="detail-special"><strong>✨ امکانات ویژه:</strong> ${item.specialFeatures}</div>`;
 
             detailBody.innerHTML = `
                 ${sliderHtml}
@@ -1009,6 +1024,9 @@
         modalCancel.addEventListener('click', closeModal);
         modalProperty.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
+        // ================================================================
+        //  ذخیره فرم
+        // ================================================================
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -1032,8 +1050,7 @@
                 return;
             }
 
-            let propertyData = { type, title, desc, fullDesc, phones, area, buildYear, bedrooms, address,
-                specialFeatures, parking, storage, elevator, gas, images: [] };
+            let propertyData = { type, title, desc, fullDesc, phones, area, buildYear, bedrooms, address, specialFeatures, parking, storage, elevator, gas, images: [] };
 
             if (type === 'buy') {
                 const price = formPrice.value.trim().replace(/,/g, '');
@@ -1045,9 +1062,7 @@
                 const sold = formSold.checked;
 
                 if (!price) { alert('لطفاً قیمت فروش را وارد کنید.'); return; }
-                propertyData = { ...propertyData, price, mortgage, hasTenant, tenantRentPrice, tenantLeasePrice,
-                    tenantVacateDate, sold, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '',
-                    isConvertible: false, isRented: false };
+                propertyData = { ...propertyData, price, mortgage, hasTenant, tenantRentPrice, tenantLeasePrice, tenantVacateDate, sold, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '', isConvertible: false, isRented: false };
             } else {
                 const rentPrice = formRentPrice.value.trim().replace(/,/g, '');
                 const leasePrice = formLeasePrice.value.trim().replace(/,/g, '');
@@ -1057,9 +1072,7 @@
                 const isRented = formIsRented.checked;
 
                 if (!rentPrice || !leasePrice) { alert('لطفاً مبلغ رهن و اجاره را وارد کنید.'); return; }
-                propertyData = { ...propertyData, rentPrice, leasePrice, isVacant, vacateDate, isConvertible,
-                    isRented, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '',
-                    tenantVacateDate: '', sold: false };
+                propertyData = { ...propertyData, rentPrice, leasePrice, isVacant, vacateDate, isConvertible, isRented, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false };
             }
 
             const files = formImages.files;
@@ -1267,6 +1280,9 @@
 
         addPropertyBtn.addEventListener('click', function() { if (currentUser) openModal(null); });
 
+        // ================================================================
+        //  تب‌ها
+        // ================================================================
         tabs.forEach(btn => {
             btn.addEventListener('click', function() {
                 tabs.forEach(b => b.classList.remove('active'));
@@ -1276,6 +1292,9 @@
             });
         });
 
+        // ================================================================
+        //  اجرای اولیه
+        // ================================================================
         toggleFormSections('buy');
         initSampleData().then(() => {
             updateUI();

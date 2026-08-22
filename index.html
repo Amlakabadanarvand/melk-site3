@@ -234,39 +234,30 @@
 
     <script>
         // ================================================================
-        //  دیتابیس در خود گیت‌هاب (با GitHub API و توکن جدید شما)
+        //  دیتابیس در گیت‌هاب (از طریق واسطه امن Cloudflare Worker - بدون توکن در کد)
         // ================================================================
-        const GITHUB_USERNAME = '01alpha1379';
-        const GITHUB_REPO = 'melk-site3';
-        const GITHUB_TOKEN = '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';
-
-        const DATA_FILE_PATH = 'data.json';
-        const API_URL = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${DATA_FILE_PATH}`;
+        const PROXY_URL = 'https://melk-proxy.parsamaghsodi76.workers.dev/';
 
         let currentFileSha = null;
 
         // ================================================================
-        //  توابع خواندن و نوشتن در گیت‌هاب (رفع باگ btoa)
+        //  توابع خواندن و نوشتن (از طریق Worker، نه مستقیم گیت‌هاب)
         // ================================================================
         async function loadPropertiesFromGitHub() {
             try {
-                const response = await fetch(API_URL, {
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-
-                if (response.status === 404) {
-                    await createEmptyDataFile();
-                    return [];
-                }
+                const response = await fetch(PROXY_URL);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
+
+                if (!data.sha) {
+                    await createEmptyDataFile();
+                    return [];
+                }
+
                 currentFileSha = data.sha;
                 const content = atob(data.content);
                 return JSON.parse(content);
@@ -278,13 +269,9 @@
 
         async function createEmptyDataFile() {
             try {
-                const response = await fetch(API_URL, {
+                const response = await fetch(PROXY_URL, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github.v3+json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: 'ایجاد فایل داده اولیه',
                         content: btoa('[]'),
@@ -308,30 +295,21 @@
 
         async function savePropertiesToGitHub(properties) {
             try {
-                const getResponse = await fetch(API_URL, {
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
+                const getResponse = await fetch(PROXY_URL);
 
                 let sha = currentFileSha;
                 if (getResponse.ok) {
                     const data = await getResponse.json();
-                    sha = data.sha;
+                    if (data.sha) sha = data.sha;
                 }
 
                 // ===== رفع باگ btoa با encodeURIComponent =====
                 const jsonString = JSON.stringify(properties);
                 const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
 
-                const response = await fetch(API_URL, {
+                const response = await fetch(PROXY_URL, {
                     method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/vnd.github.v3+json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: 'به‌روزرسانی داده‌های ملک‌ها',
                         content: base64Content,

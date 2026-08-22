@@ -332,9 +332,8 @@
 
     <script>
         // ================================================================
-        //  دیتابیس ابری (JSONBin) - تنظیمات نهایی و تست‌شده
+        //  دیتابیس ابری (JSONBin)
         // ================================================================
-        // این لینک یک Bin جدید است که من مخصوص شما ساختم
         const API_URL = 'https://api.jsonbin.io/v3/b/67a8f8a9acd3cb34a8e0c5d8';
         const API_KEY = '$2a$10$1n.2jL.3kVx4W5Y6Z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6t7u8v9';
 
@@ -379,7 +378,7 @@
         }
 
         // ================================================================
-        //  دیتابیس محلی (با پشتیبانی از ابر)
+        //  دیتابیس محلی
         // ================================================================
         const STORAGE_KEY = 'realEstateProperties';
         const BG_STORAGE_KEY = 'siteBackground';
@@ -464,7 +463,6 @@
         async function saveProperties(properties) {
             cachedProperties = properties;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
-
             const success = await savePropertiesToCloud(properties);
             if (!success) {
                 alert('⚠️ داده‌ها در مرورگر شما ذخیره شدند ولی در سرور ذخیره نشدند! لطفاً دوباره تلاش کنید.');

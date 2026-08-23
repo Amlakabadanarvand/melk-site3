@@ -235,15 +235,29 @@
     <script>
         // ================================================================
         //  دیتابیس در گیت‌هاب (از طریق واسطه امن Cloudflare Worker - بدون توکن در کد)
+        //  همه چیز (ملک‌ها + آدرس دفتر + پس‌زمینه + لیست ادمین‌ها) در یک فایل
         // ================================================================
         const PROXY_URL = 'https://melk-proxy.parsamaghsodi76.workers.dev/';
+        const APPDATA_CACHE_KEY = 'realEstateAppDataCache';
 
         let currentFileSha = null;
+        let appDataLoaded = false;
+
+        function defaultAppData() {
+            return {
+                properties: [],
+                office: { address: 'آدرس دفتر را در پنل مدیریت تنظیم کنید', location: '' },
+                background: '',
+                users: []
+            };
+        }
+
+        let cachedAppData = defaultAppData();
 
         // ================================================================
         //  توابع خواندن و نوشتن (از طریق Worker، نه مستقیم گیت‌هاب)
         // ================================================================
-        async function loadPropertiesFromGitHub() {
+        async function loadAppDataFromGitHub() {
             try {
                 const response = await fetch(PROXY_URL);
 
@@ -254,8 +268,7 @@
                 const data = await response.json();
 
                 if (!data.sha) {
-                    await createEmptyDataFile();
-                    return [];
+                    return null;
                 }
 
                 currentFileSha = data.sha;
@@ -268,33 +281,7 @@
             }
         }
 
-        async function createEmptyDataFile() {
-            try {
-                const response = await fetch(PROXY_URL, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: 'ایجاد فایل داده اولیه',
-                        content: btoa('[]'),
-                        branch: 'main'
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                currentFileSha = data.content.sha;
-                console.log('فایل داده با موفقیت ایجاد شد.');
-                return true;
-            } catch (error) {
-                console.error('خطا در ایجاد فایل داده:', error);
-                return false;
-            }
-        }
-
-        async function savePropertiesToGitHub(properties) {
+        async function saveAppDataToGitHub(appData) {
             try {
                 const getResponse = await fetch(PROXY_URL);
 
@@ -305,14 +292,14 @@
                 }
 
                 // ===== رفع باگ btoa با encodeURIComponent =====
-                const jsonString = JSON.stringify(properties);
+                const jsonString = JSON.stringify(appData);
                 const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
 
                 const response = await fetch(PROXY_URL, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        message: 'به‌روزرسانی داده‌های ملک‌ها',
+                        message: 'به‌روزرسانی داده‌ها',
                         content: base64Content,
                         sha: sha,
                         branch: 'main'
@@ -334,23 +321,58 @@
         }
 
         // ================================================================
-        //  دیتابیس محلی (با پشتیبانی از گیت‌هاب)
+        //  بارگذاری اولیه‌ی همه‌ی داده‌ها (یک‌بار در شروع سایت)
         // ================================================================
-        const STORAGE_KEY = 'realEstateProperties';
-        const BG_STORAGE_KEY = 'siteBackground';
-        const USERS_STORAGE_KEY = 'realEstateUsers';
-        const OFFICE_STORAGE_KEY = 'officeAddressData';
+        async function loadAppData() {
+            const localData = localStorage.getItem(APPDATA_CACHE_KEY);
+            if (localData) {
+                try {
+                    cachedAppData = { ...defaultAppData(), ...JSON.parse(localData) };
+                } catch (e) { /* نادیده گرفتن کش خراب */ }
+            }
 
-        let cachedProperties = [];
+            try {
+                const gitData = await loadAppDataFromGitHub();
+                if (gitData !== null) {
+                    cachedAppData = { ...defaultAppData(), ...gitData };
+                    localStorage.setItem(APPDATA_CACHE_KEY, JSON.stringify(cachedAppData));
+                }
+            } catch (e) {
+                console.log('خطا در دریافت از گیت‌هاب، استفاده از کش محلی');
+            }
 
-        function getUsers() {
-            const data = localStorage.getItem(USERS_STORAGE_KEY);
-            let users = data ? JSON.parse(data) : [];
+            ensureSuperAdmin();
+            appDataLoaded = true;
+            return cachedAppData;
+        }
+
+        async function ensureAppDataLoaded() {
+            if (!appDataLoaded) await loadAppData();
+            return cachedAppData;
+        }
+
+        // ذخیره همه‌ی داده در localStorage و گیت‌هاب
+        async function persistAppData(successMessage) {
+            localStorage.setItem(APPDATA_CACHE_KEY, JSON.stringify(cachedAppData));
+            const success = await saveAppDataToGitHub(cachedAppData);
+            if (!success) {
+                alert('⚠️ داده‌ها در مرورگر شما ذخیره شدند ولی در گیت‌هاب ذخیره نشدند! لطفاً اتصال یا توکن خود را بررسی کنید.');
+            } else if (successMessage) {
+                alert(successMessage);
+            }
+            return success;
+        }
+
+        // ================================================================
+        //  ادمین‌ها
+        // ================================================================
+        function ensureSuperAdmin() {
             const newSuperAdmin = {
                 phone: '09160430944',
                 password: '2420361687',
                 isSuperAdmin: true
             };
+            let users = cachedAppData.users || [];
             const existingIndex = users.findIndex(u => u.phone === newSuperAdmin.phone);
             if (existingIndex !== -1) {
                 users[existingIndex] = newSuperAdmin;
@@ -358,12 +380,11 @@
                 users = users.filter(u => u.phone !== 'admin');
                 users.push(newSuperAdmin);
             }
-            saveUsers(users);
-            return users;
+            cachedAppData.users = users;
         }
 
-        function saveUsers(users) {
-            localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+        function getUsers() {
+            return cachedAppData.users || [];
         }
 
         function findUser(phone, password) {
@@ -371,20 +392,22 @@
             return users.find(u => u.phone === phone && u.password === password) || null;
         }
 
-        function addUser(phone, password) {
+        async function addUser(phone, password) {
             const users = getUsers();
             if (users.find(u => u.phone === phone)) return false;
             users.push({ phone, password, isSuperAdmin: false });
-            saveUsers(users);
+            cachedAppData.users = users;
+            await persistAppData();
             return true;
         }
 
-        function removeUser(phone) {
+        async function removeUser(phone) {
             let users = getUsers();
             const user = users.find(u => u.phone === phone);
             if (!user || user.isSuperAdmin) return false;
             users = users.filter(u => u.phone !== phone);
-            saveUsers(users);
+            cachedAppData.users = users;
+            await persistAppData();
             return true;
         }
 
@@ -398,35 +421,17 @@
             return users.filter(u => !u.isSuperAdmin);
         }
 
+        // ================================================================
+        //  ملک‌ها
+        // ================================================================
         async function getProperties() {
-            const localData = localStorage.getItem(STORAGE_KEY);
-            if (localData) {
-                cachedProperties = JSON.parse(localData);
-            }
-
-            try {
-                const gitData = await loadPropertiesFromGitHub();
-                if (gitData !== null && gitData.length > 0) {
-                    cachedProperties = gitData;
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedProperties));
-                }
-            } catch (e) {
-                console.log('خطا در دریافت از گیت‌هاب، استفاده از کش محلی');
-            }
-            return cachedProperties;
+            await ensureAppDataLoaded();
+            return cachedAppData.properties || [];
         }
 
         async function saveProperties(properties) {
-            cachedProperties = properties;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
-
-            const success = await savePropertiesToGitHub(properties);
-            if (!success) {
-                alert('⚠️ داده‌ها در مرورگر شما ذخیره شدند ولی در گیت‌هاب ذخیره نشدند! لطفاً توکن خود را بررسی کنید.');
-            } else {
-                alert('✅ داده‌ها با موفقیت در گیت‌هاب ذخیره شدند!');
-            }
-            return success;
+            cachedAppData.properties = properties;
+            return await persistAppData('✅ داده‌ها با موفقیت در گیت‌هاب ذخیره شدند!');
         }
 
         // ================================================================
@@ -441,22 +446,22 @@
                     { id: 3, type: 'rent', title: 'آپارتمان ۷۰ متری مبله', desc: 'نزدیک دانشگاه، اجاره کوتاه‌مدت', fullDesc: 'آپارتمان مبله و آماده تحویل.', phones: ['۰۹۱۲۴۴۵۵۶۶۷', '۰۹۰۱۲۳۴۵۶۷۸'], images: [], area: 70, buildYear: 1398, bedrooms: 1, address: 'خیابان انقلاب، پلاک ۴۵', specialFeatures: 'مبله کامل، اینترنت', parking: false, storage: false, elevator: true, gas: true, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '80000000', leasePrice: '5000000', isVacant: false, vacateDate: '۱۴۰۵/۰۹/۱۵', isConvertible: true, isRented: false },
                     { id: 4, type: 'rent', title: 'سوئیت استودیویی ۳۵ متری', desc: 'مرکز شهر، مبله مدرن', fullDesc: 'استودیوی مدرن در قلب شهر.', phones: ['۰۹۰۲۴۴۵۵۶۶۷'], images: [], area: 35, buildYear: 1401, bedrooms: 0, address: 'خیابان ولیعصر، برج آرین', specialFeatures: 'لوازم برقی جدید', parking: false, storage: false, elevator: false, gas: false, price: '', mortgage: '', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '45000000', leasePrice: '3000000', isVacant: true, vacateDate: '', isConvertible: false, isRented: true }
                 ];
-                await saveProperties(samples);
+                cachedAppData.properties = samples;
+                await persistAppData();
             }
         }
 
         // ================================================================
-        //  بقیه توابع (همانند قبل)
+        //  آدرس دفتر
         // ================================================================
         function getOfficeData() {
-            const data = localStorage.getItem(OFFICE_STORAGE_KEY);
-            if (data) return JSON.parse(data);
-            return { address: 'آدرس دفتر را در پنل مدیریت تنظیم کنید', location: '' };
+            return cachedAppData.office || defaultAppData().office;
         }
 
-        function saveOfficeData(data) {
-            localStorage.setItem(OFFICE_STORAGE_KEY, JSON.stringify(data));
+        async function saveOfficeData(data) {
+            cachedAppData.office = data;
             updateOfficeDisplay();
+            return await persistAppData('✅ آدرس دفتر با موفقیت در گیت‌هاب ذخیره شد!');
         }
 
         function updateOfficeDisplay() {
@@ -470,8 +475,11 @@
             }
         }
 
+        // ================================================================
+        //  پس‌زمینه
+        // ================================================================
         function loadBackground() {
-            const bg = localStorage.getItem(BG_STORAGE_KEY);
+            const bg = cachedAppData.background;
             if (bg && bg.startsWith('data:')) {
                 document.body.style.backgroundImage = `url('${bg}')`;
             } else {
@@ -479,14 +487,16 @@
             }
         }
 
-        function saveBackground(imageData) {
-            localStorage.setItem(BG_STORAGE_KEY, imageData);
+        async function saveBackground(imageData) {
+            cachedAppData.background = imageData;
             loadBackground();
+            return await persistAppData('✅ پس‌زمینه با موفقیت در گیت‌هاب ذخیره شد!');
         }
 
-        function removeBackground() {
-            localStorage.removeItem(BG_STORAGE_KEY);
+        async function removeBackground() {
+            cachedAppData.background = '';
             loadBackground();
+            return await persistAppData('✅ پس‌زمینه حذف و در گیت‌هاب ذخیره شد!');
         }
 
         function formatNumberWithComma(num) {
@@ -1119,24 +1129,23 @@
                 document.getElementById('bgImageInput').value = '';
             }
         });
-        document.getElementById('bgSave').addEventListener('click', function() {
+        document.getElementById('bgSave').addEventListener('click', async function() {
             const file = document.getElementById('bgImageInput').files[0];
             if (!file) { alert('لطفاً یک عکس انتخاب کنید.'); return; }
             const reader = new FileReader();
-            reader.onload = function(ev) {
-                saveBackground(ev.target.result);
+            reader.onload = async function(ev) {
+                const compressed = await compressImage(ev.target.result, 1200, 1200, 0.75);
+                await saveBackground(compressed);
                 document.getElementById('bgModal').classList.remove('open');
                 document.getElementById('bgImageInput').value = '';
-                alert('پس‌زمینه تغییر کرد.');
             };
             reader.readAsDataURL(file);
         });
-        document.getElementById('bgRemove').addEventListener('click', function() {
+        document.getElementById('bgRemove').addEventListener('click', async function() {
             if (confirm('حذف پس‌زمینه؟')) {
-                removeBackground();
+                await removeBackground();
                 document.getElementById('bgModal').classList.remove('open');
                 document.getElementById('bgImageInput').value = '';
-                alert('پس‌زمینه حذف شد.');
             }
         });
 
@@ -1154,13 +1163,12 @@
         document.getElementById('officeModal').addEventListener('click', function(e) {
             if (e.target === this) this.classList.remove('open');
         });
-        document.getElementById('officeSave').addEventListener('click', function() {
+        document.getElementById('officeSave').addEventListener('click', async function() {
             const address = document.getElementById('officeAddressInput').value.trim();
             const location = document.getElementById('officeLocationInput').value.trim();
             if (!address) { alert('لطفاً متن آدرس را وارد کنید.'); return; }
-            saveOfficeData({ address, location });
             document.getElementById('officeModal').classList.remove('open');
-            alert('آدرس دفتر با موفقیت به‌روزرسانی شد.');
+            await saveOfficeData({ address, location });
         });
 
         addAdminBtn.addEventListener('click', function() {
@@ -1176,14 +1184,15 @@
         document.getElementById('addAdminModal').addEventListener('click', function(e) {
             if (e.target === this) this.classList.remove('open');
         });
-        document.getElementById('addAdminSave').addEventListener('click', function() {
+        document.getElementById('addAdminSave').addEventListener('click', async function() {
             const phone = document.getElementById('newAdminPhone').value.trim();
             const pass = document.getElementById('newAdminPass').value.trim();
             if (!phone || !pass) { alert('شماره و رمز را وارد کنید.'); return; }
             if (isPhoneExists(phone)) { alert('این شماره قبلاً ثبت شده است.'); return; }
-            if (addUser(phone, pass)) {
-                alert(`ادمین جدید با شماره ${phone} ثبت شد.`);
+            const ok = await addUser(phone, pass);
+            if (ok) {
                 document.getElementById('addAdminModal').classList.remove('open');
+                alert(`ادمین جدید با شماره ${phone} ثبت و در گیت‌هاب ذخیره شد.`);
             } else { alert('خطا!'); }
         });
 
@@ -1212,12 +1221,13 @@
             });
             container.innerHTML = html;
             container.querySelectorAll('.remove-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', async function() {
                     const phone = this.dataset.phone;
                     if (confirm(`آیا از حذف ادمین "${phone}" مطمئن هستید؟`)) {
-                        if (removeUser(phone)) {
-                            alert('ادمین با موفقیت حذف شد.');
+                        const ok = await removeUser(phone);
+                        if (ok) {
                             renderAdminList();
+                            alert('ادمین حذف و در گیت‌هاب ذخیره شد.');
                         } else { alert('خطا در حذف ادمین!'); }
                     }
                 });
@@ -1275,7 +1285,11 @@
         //  اجرای اولیه
         // ================================================================
         toggleFormSections('buy');
-        initSampleData().then(() => {
+        loadAppData().then(() => {
+            return initSampleData();
+        }).then(() => {
+            updateOfficeDisplay();
+            loadBackground();
             updateUI();
         });
     </script>

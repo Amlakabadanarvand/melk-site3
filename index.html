@@ -259,7 +259,8 @@
                 }
 
                 currentFileSha = data.sha;
-                const content = atob(data.content);
+                const rawBase64 = data.content.replace(/\n/g, '');
+                const content = decodeURIComponent(escape(atob(rawBase64)));
                 return JSON.parse(content);
             } catch (error) {
                 console.error('خطا در بارگذاری از گیت‌هاب:', error);

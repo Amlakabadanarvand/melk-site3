@@ -211,7 +211,7 @@
                 <label>امکانات عمومی</label>
                 <div class="checkbox-group"><label><input type="checkbox" id="formParking" /> پارکینگ</label><label><input type="checkbox" id="formStorage" /> انباری</label><label><input type="checkbox" id="formElevator" /> آسانسور</label><label><input type="checkbox" id="formGas" /> گازکشی</label></div>
                 <label>عکس‌های ملک</label>
-                <div class="file-input-wrapper"><input type="file" id="formImages" accept="image/*" multiple /><div style="font-size:12px; color:#888;">(با Ctrl یا Shift چند عکس انتخاب کنید - بدون محدودیت)</div><div style="font-size:11px; color:#e74c3c; margin-top:4px;">⚠️ عکس‌ها به‌طور خودکار فشرده می‌شوند.</div></div>
+                <div class="file-input-wrapper"><input type="file" id="formImages" accept="image/*" multiple /><div style="font-size:12px; color:#888;">(با Ctrl یا Shift چند عکس انتخاب کنید - حداکثر ۵ عکس)</div><div style="font-size:11px; color:#e74c3c; margin-top:4px;">⚠️ عکس‌ها به‌طور خودکار فشرده می‌شوند.</div></div>
                 <div id="imagePreviewContainer" class="image-gallery-preview"></div>
                 <div id="soldStatusWrapper" style="display:none;"><label><input type="checkbox" id="formSold" /> فروخته شده است (ویژه خرید)</label></div>
                 <div id="rentedStatusWrapper" style="display:none;"><label><input type="checkbox" id="formIsRented" /> رهن داده شده است (ویژه رهن/اجاره)</label></div>
@@ -262,22 +262,23 @@
                 const response = await fetch(PROXY_URL);
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    return { status: 'error' };
                 }
 
                 const data = await response.json();
 
                 if (!data.sha) {
-                    return null;
+                    // فایل واقعاً وجود ندارد (اولین اجرا)
+                    return { status: 'empty' };
                 }
 
                 currentFileSha = data.sha;
                 const rawBase64 = data.content.replace(/\n/g, '');
                 const content = decodeURIComponent(escape(atob(rawBase64)));
-                return JSON.parse(content);
+                return { status: 'ok', data: JSON.parse(content) };
             } catch (error) {
                 console.error('خطا در بارگذاری از گیت‌هاب:', error);
-                return null;
+                return { status: 'error' };
             }
         }
 
@@ -323,6 +324,8 @@
         // ================================================================
         //  بارگذاری اولیه‌ی همه‌ی داده‌ها (یک‌بار در شروع سایت)
         // ================================================================
+        let githubStatus = 'unknown'; // 'ok' | 'empty' | 'error'
+
         async function loadAppData() {
             const localData = localStorage.getItem(APPDATA_CACHE_KEY);
             if (localData) {
@@ -332,12 +335,16 @@
             }
 
             try {
-                const gitData = await loadAppDataFromGitHub();
-                if (gitData !== null) {
-                    cachedAppData = { ...defaultAppData(), ...gitData };
+                const result = await loadAppDataFromGitHub();
+                githubStatus = result.status;
+                if (result.status === 'ok') {
+                    cachedAppData = { ...defaultAppData(), ...result.data };
                     localStorage.setItem(APPDATA_CACHE_KEY, JSON.stringify(cachedAppData));
                 }
+                // اگر status === 'error' هست، هیچ تغییری در cachedAppData نمی‌دهیم
+                // تا داده‌های واقعی (چه محلی چه قبلی) پاک نشوند.
             } catch (e) {
+                githubStatus = 'error';
                 console.log('خطا در دریافت از گیت‌هاب، استفاده از کش محلی');
             }
 
@@ -440,6 +447,11 @@
         async function initSampleData() {
             const properties = await getProperties();
             if (properties.length === 0) {
+                // فقط وقتی مطمئنیم واقعاً داده‌ای وجود ندارد (نه به‌خاطر خطای اتصال) نمونه بسازیم
+                if (githubStatus === 'error') {
+                    console.log('اتصال به گیت‌هاب برقرار نشد؛ از ساخت مجدد داده نمونه صرف‌نظر شد تا داده واقعی پاک نشود.');
+                    return;
+                }
                 const samples = [
                     { id: 1, type: 'buy', title: 'آپارتمان لاکچری ۱۵۰ متری', desc: 'برج دوقلو، سونا و جکوزی', fullDesc: 'آپارتمان مدرن با امکانات کامل.', phones: ['۰۹۱۲۱۱۱۲۲۳۳', '۰۹۰۳۳۴۴۵۵۶۶'], images: [], area: 150, buildYear: 1400, bedrooms: 3, address: 'خیابان ولیعصر، پلاک ۱۲', specialFeatures: 'سیستم امنیتی، استخر', parking: true, storage: true, elevator: true, gas: true, price: '3200000000', mortgage: '800000000', hasTenant: true, tenantRentPrice: '30000000', tenantLeasePrice: '2000000', tenantVacateDate: '۱۴۰۵/۱۲/۰۱', sold: false, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '', isConvertible: false, isRented: false },
                     { id: 2, type: 'buy', title: 'خانه ویلایی ۳۰۰ متری', desc: 'باغچه ۱۰۰ متری، استخر شخصی', fullDesc: 'ویلایی دوبلکس با حیاط بزرگ.', phones: ['۰۹۱۲۳۳۴۴۵۵۶'], images: [], area: 300, buildYear: 1395, bedrooms: 4, address: 'خیابان پاسداران، پلاک ۸', specialFeatures: 'استخر اختصاصی، باغ میوه', parking: true, storage: false, elevator: false, gas: true, price: '5500000000', mortgage: '1200000000', hasTenant: false, tenantRentPrice: '', tenantLeasePrice: '', tenantVacateDate: '', sold: false, rentPrice: '', leasePrice: '', isVacant: false, vacateDate: '', isConvertible: false, isRented: false },
@@ -1079,10 +1091,14 @@
                             reader.onerror = (e) => reject(e);
                             reader.readAsDataURL(file);
                         });
-                        const compressed = await compressImage(imageData, 800, 600, 0.7);
+                        const compressed = await compressImage(imageData, 700, 500, 0.55);
                         compressedImages.push(compressed);
                     }
                     allImages = [...allImages, ...compressedImages];
+                    if (allImages.length > 5) {
+                        allImages = allImages.slice(0, 5);
+                        alert('⚠️ برای جلوگیری از پر شدن حجم، حداکثر ۵ عکس برای هر ملک نگه داشته شد.');
+                    }
                 } catch (error) {
                     alert('خطا در خواندن یا فشرده‌سازی عکس!');
                     return;
